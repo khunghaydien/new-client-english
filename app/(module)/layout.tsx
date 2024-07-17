@@ -9,7 +9,7 @@ const Profile = lazy(() => import("@/components/common/profile"));
 function layout({ children }: { children: ReactNode }) {
   return (
     <div className="p-6">
-      <nav className="w-full flex items-center justify-between p-4 text-sm">
+      <nav className="w-full flex items-center justify-between py-2 px-4 text-sm">
         <Suspense fallback={<Skeleton className="h-8 w-16" />}>
           <Logo />
         </Suspense>
@@ -18,7 +18,7 @@ function layout({ children }: { children: ReactNode }) {
             <ThemeSwitcher />
           </Suspense>
           <Suspense
-            fallback={<Skeleton className="h-[36px] h-[36px] rounded-full" />}
+            fallback={<Skeleton className="h-[36px] w-[36px] rounded-full" />}
           >
             <Profile />
           </Suspense>
