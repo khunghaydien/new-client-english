@@ -120,7 +120,7 @@ const SelectMultipleAutoComplete = ({
         }`}
       >
         {isEmpty(selected) && !showOptions && (
-          <p className="text-sm text-muted-foreground">{placeholder}</p>
+          <p className="text-sm">{placeholder}</p>
         )}
         {selected?.map((item) => (
           <div

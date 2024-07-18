@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { isEmpty } from "lodash";
-import { cn } from "@/lib/utils";
+import { cn, getFirstNSegments } from "@/lib/utils";
 import {
   Accordion,
   AccordionContent,
@@ -29,21 +29,24 @@ const NestedAccordion = ({
     <Accordion
       type="single"
       collapsible
+      className={"gap-2 flex flex-col"}
       style={{ marginLeft: `${level * 16}px` }}
+      defaultValue={getFirstNSegments(pathname)}
     >
       {data.map(({ label, href, children }, index) => {
         return (
           <AccordionItem
             key={index}
             value={href}
-            className={cn("gap-2 flex flex-col")}
+            className={"gap-2 flex flex-col"}
           >
             {isEmpty(children) && (
               <Link
-                className={`rounded-lg p-2 hover:bg-muted cursor-pointer text-sm ${pathname === href
-                  ? "bg-primary hover:bg-primary text-white"
-                  : ""
-                  }`}
+                className={`rounded-lg p-2 hover:bg-muted cursor-pointer text-sm font-bold ${
+                  pathname.includes(href)
+                    ? "bg-primary hover:bg-primary text-white"
+                    : ""
+                }`}
                 href={href}
               >
                 {label}
@@ -51,7 +54,7 @@ const NestedAccordion = ({
             )}
             {!isEmpty(children) && (
               <>
-                <AccordionTrigger className="rounded-lg p-2 hover:bg-muted data-[state=open]:bg-secondary">
+                <AccordionTrigger className="rounded-lg p-2 hover:bg-muted data-[state=open]:bg-secondary text-sm font-bold">
                   {label}
                 </AccordionTrigger>
                 <AccordionContent>

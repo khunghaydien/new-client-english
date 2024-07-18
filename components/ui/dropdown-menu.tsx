@@ -30,7 +30,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
 
   return (
     <DropdownMenuContext.Provider value={{ open, setOpen }}>
-      <div ref={ref} className={cn("relative", className)} {...props}>
+      <div ref={ref} className={cn("relative z-10", className)} {...props}>
         {children}
       </div>
     </DropdownMenuContext.Provider>
@@ -76,7 +76,7 @@ const DropdownMenuContent = React.forwardRef<
     <div
       ref={ref}
       className={cn(
-        "origin-top-right absolute right-0 top-10 p-4 rounded-md shadow-lg bg-muted",
+        "origin-top-right absolute right-0 top-10 px-2 py-1 rounded-md shadow-lg bg-muted",
         className
       )}
       {...props}
@@ -92,7 +92,7 @@ const DropdownMenuItem = React.forwardRef<
   <button
     ref={ref}
     className={cn(
-      "block px-4 py-2 text-sm hover:bg-blue-500 hover:text-white rounded-lg min-w-[200px] flex justify-start",
+      "block px-4 py-2 text-sm p-3 rounded-lg hover:bg-primary/50 hover:text-muted dark:hover:bg-primary/50 dark:hover:text-foreground rounded-lg min-w-[200px] flex justify-start",
       className
     )}
     {...props}

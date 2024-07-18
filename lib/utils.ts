@@ -1,8 +1,8 @@
 'use client'
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { MAX_ELLIPSIS } from "./const"
 import { useEffect } from "react"
+import { MAX_ELLIPSIS } from "@/const/app"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -56,4 +56,12 @@ export const scrollToFirstErrorMessage = () => {
       behavior: 'smooth',
     })
   }
+}
+
+export const getFirstNSegments = (url: string, rank: number = 2): string => {
+  const parts = url.split("/");
+  if (parts.length > rank) {
+    return "/" + parts.slice(1, rank + 1).join("/");
+  }
+  return url;
 }
