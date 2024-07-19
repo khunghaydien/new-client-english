@@ -1,4 +1,11 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import { Input } from "../ui/input";
 import { cn, getTextEllipsis, useClickOutside } from "@/lib/utils";
 import _ from "lodash";
@@ -12,12 +19,14 @@ export interface IInputAutoComplete {
   placeholder?: string;
   suggestions: Suggestion[];
   onChange: (value: string) => void;
+  setWriting: Dispatch<SetStateAction<boolean>>;
 }
 const InputAutoComplete = ({
   suggestions,
   className,
   placeholder,
   onChange,
+  setWriting,
 }: IInputAutoComplete) => {
   const inputAutoCompleteRef = useRef<HTMLDivElement>(null);
   const [inputValue, setInputValue] = useState<string>("");
@@ -30,14 +39,16 @@ const InputAutoComplete = ({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const debounceInput = useCallback(
-    _.throttle((value: string) => {
+    _.debounce((value: string) => {
       onChange(value);
-    }, 300),
+      setWriting(false);
+    }, 1000),
     []
   );
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
+    setWriting(true);
     debounceInput(value);
     setInputValue(value);
     if (value) {

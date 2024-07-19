@@ -21,11 +21,49 @@ export type Scalars = {
   DateTime: { input: any; output: any; }
 };
 
-export type CreateExerciseDto = {
-  construction: Scalars['String']['input'];
-  exerciseType: Array<Scalars['String']['input']>;
-  level?: InputMaybe<Scalars['String']['input']>;
+export type Answer = {
+  __typename?: 'Answer';
+  id: Scalars['String']['output'];
+  isCorrect: Scalars['Boolean']['output'];
+  label: Scalars['String']['output'];
+  question: Question;
+  questionId: Scalars['String']['output'];
+  value: Scalars['String']['output'];
+};
+
+export type Chapter = {
+  __typename?: 'Chapter';
+  createdAt: Scalars['DateTime']['output'];
+  description: Scalars['String']['output'];
+  exercises: Array<Exercise>;
+  explanations: Array<Explanation>;
+  id: Scalars['String']['output'];
+  level: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  status: Scalars['String']['output'];
+  type: Array<Scalars['String']['output']>;
+  updatedAt: Scalars['DateTime']['output'];
+  viewed: Scalars['Float']['output'];
+};
+
+export type ChapterCreateDto = {
+  description: Scalars['String']['input'];
+  level: Scalars['String']['input'];
   name: Scalars['String']['input'];
+  type: Array<Scalars['String']['input']>;
+};
+
+export type ChapterFilterDto = {
+  level?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  type?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
+export type ChapterUpdateDto = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  level?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  type?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
 export type ErrorType = {
@@ -36,17 +74,25 @@ export type ErrorType = {
 
 export type Exercise = {
   __typename?: 'Exercise';
+  chapter: Chapter;
+  chapterId: Scalars['String']['output'];
   construction: Scalars['String']['output'];
-  exerciseType: Array<Scalars['String']['output']>;
+  createdAt: Scalars['DateTime']['output'];
   id: Scalars['String']['output'];
-  level: Scalars['String']['output'];
   name: Scalars['String']['output'];
+  questions: Array<Question>;
+  type: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
 };
 
-export type ExerciseFilterDto = {
-  exerciseType?: InputMaybe<Array<Scalars['String']['input']>>;
-  level?: InputMaybe<Scalars['String']['input']>;
-  name?: InputMaybe<Scalars['String']['input']>;
+export type Explanation = {
+  __typename?: 'Explanation';
+  chapter: Chapter;
+  chapterId: Scalars['String']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
 };
 
 export type LoginDto = {
@@ -57,35 +103,28 @@ export type LoginDto = {
 export type LoginResponse = {
   __typename?: 'LoginResponse';
   error?: Maybe<ErrorType>;
-  roles: Array<Role>;
   user: User;
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createExercise: Exercise;
-  createRole: Role;
-  deleteExercise: Exercise;
+  createChapter: Chapter;
+  deleteChapter: Chapter;
   deleteUser: User;
   login: LoginResponse;
   logout: Scalars['String']['output'];
   refreshToken: Scalars['String']['output'];
   register: RegisterResponse;
-  updateExercise: Exercise;
+  updateChapter: Chapter;
 };
 
 
-export type MutationCreateExerciseArgs = {
-  createExerciseDto: CreateExerciseDto;
+export type MutationCreateChapterArgs = {
+  chapterCreateDto: ChapterCreateDto;
 };
 
 
-export type MutationCreateRoleArgs = {
-  name: Scalars['String']['input'];
-};
-
-
-export type MutationDeleteExerciseArgs = {
+export type MutationDeleteChapterArgs = {
   id: Scalars['String']['input'];
 };
 
@@ -105,9 +144,9 @@ export type MutationRegisterArgs = {
 };
 
 
-export type MutationUpdateExerciseArgs = {
+export type MutationUpdateChapterArgs = {
+  chapterUpdateDto: ChapterUpdateDto;
   id: Scalars['String']['input'];
-  updateExerciseDto: UpdateExerciseDto;
 };
 
 export type OrderByDto = {
@@ -122,23 +161,27 @@ export type PaginationDto = {
 
 export type Query = {
   __typename?: 'Query';
-  getExercises: Array<Exercise>;
-  getRoleById: Role;
-  getRoles: Array<Role>;
+  getChapters: Array<Chapter>;
   getUsers: Array<User>;
   hello: Scalars['String']['output'];
 };
 
 
-export type QueryGetExercisesArgs = {
-  exerciseFilterDto?: InputMaybe<ExerciseFilterDto>;
+export type QueryGetChaptersArgs = {
+  chapterFilterDto?: InputMaybe<ChapterFilterDto>;
   orderByDto?: InputMaybe<OrderByDto>;
   paginationDto?: InputMaybe<PaginationDto>;
 };
 
-
-export type QueryGetRoleByIdArgs = {
-  id: Scalars['String']['input'];
+export type Question = {
+  __typename?: 'Question';
+  answers: Array<Answer>;
+  createdAt: Scalars['DateTime']['output'];
+  exercise: Exercise;
+  exerciseId: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  question: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
 };
 
 export type RegisterDto = {
@@ -151,19 +194,6 @@ export type RegisterResponse = {
   __typename?: 'RegisterResponse';
   error?: Maybe<ErrorType>;
   user?: Maybe<User>;
-};
-
-export type Role = {
-  __typename?: 'Role';
-  id: Scalars['String']['output'];
-  name: Scalars['String']['output'];
-};
-
-export type UpdateExerciseDto = {
-  construction?: InputMaybe<Scalars['String']['input']>;
-  exerciseType?: InputMaybe<Array<Scalars['String']['input']>>;
-  level?: InputMaybe<Scalars['String']['input']>;
-  name?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type User = {
@@ -184,7 +214,7 @@ export type LoginUserMutationVariables = Exact<{
 }>;
 
 
-export type LoginUserMutation = { __typename?: 'Mutation', login: { __typename?: 'LoginResponse', user: { __typename?: 'User', email: string, id: string, fullname: string }, roles: Array<{ __typename?: 'Role', name: string }> } };
+export type LoginUserMutation = { __typename?: 'Mutation', login: { __typename?: 'LoginResponse', user: { __typename?: 'User', email: string, id: string, fullname: string } } };
 
 export type LogoutUserMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -207,11 +237,21 @@ export type DeleteUserMutationVariables = Exact<{
 
 export type DeleteUserMutation = { __typename?: 'Mutation', deleteUser: { __typename?: 'User', fullname: string } };
 
+export type GetChaptersQueryVariables = Exact<{
+  chapterFilterDto?: InputMaybe<ChapterFilterDto>;
+  paginationDto?: InputMaybe<PaginationDto>;
+  orderByDto?: InputMaybe<OrderByDto>;
+}>;
 
-export const LoginUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"LoginUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"password"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"loginInput"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"password"},"value":{"kind":"Variable","name":{"kind":"Name","value":"password"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fullname"}}]}},{"kind":"Field","name":{"kind":"Name","value":"roles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<LoginUserMutation, LoginUserMutationVariables>;
+
+export type GetChaptersQuery = { __typename?: 'Query', getChapters: Array<{ __typename?: 'Chapter', id: string, name: string, viewed: number, createdAt: any, updatedAt: any, status: string }> };
+
+
+export const LoginUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"LoginUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"password"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"loginInput"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"password"},"value":{"kind":"Variable","name":{"kind":"Name","value":"password"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fullname"}}]}}]}}]}}]} as unknown as DocumentNode<LoginUserMutation, LoginUserMutationVariables>;
 export const LogoutUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"LogoutUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"logout"}}]}}]} as unknown as DocumentNode<LogoutUserMutation, LogoutUserMutationVariables>;
 export const RegisterUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RegisterUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"fullname"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"password"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"register"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"registerInput"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"fullname"},"value":{"kind":"Variable","name":{"kind":"Name","value":"fullname"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"password"},"value":{"kind":"Variable","name":{"kind":"Name","value":"password"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fullname"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]}}]} as unknown as DocumentNode<RegisterUserMutation, RegisterUserMutationVariables>;
 export const DeleteUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"deleteUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fullname"}}]}}]}}]} as unknown as DocumentNode<DeleteUserMutation, DeleteUserMutationVariables>;
+export const GetChaptersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetChapters"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"chapterFilterDto"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"ChapterFilterDto"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"paginationDto"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"PaginationDto"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderByDto"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"OrderByDto"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getChapters"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"chapterFilterDto"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chapterFilterDto"}}},{"kind":"Argument","name":{"kind":"Name","value":"paginationDto"},"value":{"kind":"Variable","name":{"kind":"Name","value":"paginationDto"}}},{"kind":"Argument","name":{"kind":"Name","value":"orderByDto"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderByDto"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"viewed"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]} as unknown as DocumentNode<GetChaptersQuery, GetChaptersQueryVariables>;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: { input: string; output: string; }
@@ -223,11 +263,49 @@ export type Scalars = {
   DateTime: { input: any; output: any; }
 };
 
-export type CreateExerciseDto = {
-  construction: Scalars['String']['input'];
-  exerciseType: Array<Scalars['String']['input']>;
-  level?: InputMaybe<Scalars['String']['input']>;
+export type Answer = {
+  __typename?: 'Answer';
+  id: Scalars['String']['output'];
+  isCorrect: Scalars['Boolean']['output'];
+  label: Scalars['String']['output'];
+  question: Question;
+  questionId: Scalars['String']['output'];
+  value: Scalars['String']['output'];
+};
+
+export type Chapter = {
+  __typename?: 'Chapter';
+  createdAt: Scalars['DateTime']['output'];
+  description: Scalars['String']['output'];
+  exercises: Array<Exercise>;
+  explanations: Array<Explanation>;
+  id: Scalars['String']['output'];
+  level: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  status: Scalars['String']['output'];
+  type: Array<Scalars['String']['output']>;
+  updatedAt: Scalars['DateTime']['output'];
+  viewed: Scalars['Float']['output'];
+};
+
+export type ChapterCreateDto = {
+  description: Scalars['String']['input'];
+  level: Scalars['String']['input'];
   name: Scalars['String']['input'];
+  type: Array<Scalars['String']['input']>;
+};
+
+export type ChapterFilterDto = {
+  level?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  type?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
+export type ChapterUpdateDto = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  level?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  type?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
 export type ErrorType = {
@@ -238,17 +316,25 @@ export type ErrorType = {
 
 export type Exercise = {
   __typename?: 'Exercise';
+  chapter: Chapter;
+  chapterId: Scalars['String']['output'];
   construction: Scalars['String']['output'];
-  exerciseType: Array<Scalars['String']['output']>;
+  createdAt: Scalars['DateTime']['output'];
   id: Scalars['String']['output'];
-  level: Scalars['String']['output'];
   name: Scalars['String']['output'];
+  questions: Array<Question>;
+  type: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
 };
 
-export type ExerciseFilterDto = {
-  exerciseType?: InputMaybe<Array<Scalars['String']['input']>>;
-  level?: InputMaybe<Scalars['String']['input']>;
-  name?: InputMaybe<Scalars['String']['input']>;
+export type Explanation = {
+  __typename?: 'Explanation';
+  chapter: Chapter;
+  chapterId: Scalars['String']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
 };
 
 export type LoginDto = {
@@ -259,35 +345,28 @@ export type LoginDto = {
 export type LoginResponse = {
   __typename?: 'LoginResponse';
   error?: Maybe<ErrorType>;
-  roles: Array<Role>;
   user: User;
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createExercise: Exercise;
-  createRole: Role;
-  deleteExercise: Exercise;
+  createChapter: Chapter;
+  deleteChapter: Chapter;
   deleteUser: User;
   login: LoginResponse;
   logout: Scalars['String']['output'];
   refreshToken: Scalars['String']['output'];
   register: RegisterResponse;
-  updateExercise: Exercise;
+  updateChapter: Chapter;
 };
 
 
-export type MutationCreateExerciseArgs = {
-  createExerciseDto: CreateExerciseDto;
+export type MutationCreateChapterArgs = {
+  chapterCreateDto: ChapterCreateDto;
 };
 
 
-export type MutationCreateRoleArgs = {
-  name: Scalars['String']['input'];
-};
-
-
-export type MutationDeleteExerciseArgs = {
+export type MutationDeleteChapterArgs = {
   id: Scalars['String']['input'];
 };
 
@@ -307,9 +386,9 @@ export type MutationRegisterArgs = {
 };
 
 
-export type MutationUpdateExerciseArgs = {
+export type MutationUpdateChapterArgs = {
+  chapterUpdateDto: ChapterUpdateDto;
   id: Scalars['String']['input'];
-  updateExerciseDto: UpdateExerciseDto;
 };
 
 export type OrderByDto = {
@@ -324,23 +403,27 @@ export type PaginationDto = {
 
 export type Query = {
   __typename?: 'Query';
-  getExercises: Array<Exercise>;
-  getRoleById: Role;
-  getRoles: Array<Role>;
+  getChapters: Array<Chapter>;
   getUsers: Array<User>;
   hello: Scalars['String']['output'];
 };
 
 
-export type QueryGetExercisesArgs = {
-  exerciseFilterDto?: InputMaybe<ExerciseFilterDto>;
+export type QueryGetChaptersArgs = {
+  chapterFilterDto?: InputMaybe<ChapterFilterDto>;
   orderByDto?: InputMaybe<OrderByDto>;
   paginationDto?: InputMaybe<PaginationDto>;
 };
 
-
-export type QueryGetRoleByIdArgs = {
-  id: Scalars['String']['input'];
+export type Question = {
+  __typename?: 'Question';
+  answers: Array<Answer>;
+  createdAt: Scalars['DateTime']['output'];
+  exercise: Exercise;
+  exerciseId: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  question: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
 };
 
 export type RegisterDto = {
@@ -353,19 +436,6 @@ export type RegisterResponse = {
   __typename?: 'RegisterResponse';
   error?: Maybe<ErrorType>;
   user?: Maybe<User>;
-};
-
-export type Role = {
-  __typename?: 'Role';
-  id: Scalars['String']['output'];
-  name: Scalars['String']['output'];
-};
-
-export type UpdateExerciseDto = {
-  construction?: InputMaybe<Scalars['String']['input']>;
-  exerciseType?: InputMaybe<Array<Scalars['String']['input']>>;
-  level?: InputMaybe<Scalars['String']['input']>;
-  name?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type User = {
@@ -386,7 +456,7 @@ export type LoginUserMutationVariables = Exact<{
 }>;
 
 
-export type LoginUserMutation = { __typename?: 'Mutation', login: { __typename?: 'LoginResponse', user: { __typename?: 'User', email: string, id: string, fullname: string }, roles: Array<{ __typename?: 'Role', name: string }> } };
+export type LoginUserMutation = { __typename?: 'Mutation', login: { __typename?: 'LoginResponse', user: { __typename?: 'User', email: string, id: string, fullname: string } } };
 
 export type LogoutUserMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -409,6 +479,15 @@ export type DeleteUserMutationVariables = Exact<{
 
 export type DeleteUserMutation = { __typename?: 'Mutation', deleteUser: { __typename?: 'User', fullname: string } };
 
+export type GetChaptersQueryVariables = Exact<{
+  chapterFilterDto?: InputMaybe<ChapterFilterDto>;
+  paginationDto?: InputMaybe<PaginationDto>;
+  orderByDto?: InputMaybe<OrderByDto>;
+}>;
+
+
+export type GetChaptersQuery = { __typename?: 'Query', getChapters: Array<{ __typename?: 'Chapter', id: string, name: string, viewed: number, createdAt: any, updatedAt: any, status: string }> };
+
 
 export const LoginUserDocument = gql`
     mutation LoginUser($email: String!, $password: String!) {
@@ -417,9 +496,6 @@ export const LoginUserDocument = gql`
       email
       id
       fullname
-    }
-    roles {
-      name
     }
   }
 }
@@ -555,3 +631,54 @@ export function useDeleteUserMutation(baseOptions?: Apollo.MutationHookOptions<D
 export type DeleteUserMutationHookResult = ReturnType<typeof useDeleteUserMutation>;
 export type DeleteUserMutationResult = Apollo.MutationResult<DeleteUserMutation>;
 export type DeleteUserMutationOptions = Apollo.BaseMutationOptions<DeleteUserMutation, DeleteUserMutationVariables>;
+export const GetChaptersDocument = gql`
+    query GetChapters($chapterFilterDto: ChapterFilterDto, $paginationDto: PaginationDto, $orderByDto: OrderByDto) {
+  getChapters(
+    chapterFilterDto: $chapterFilterDto
+    paginationDto: $paginationDto
+    orderByDto: $orderByDto
+  ) {
+    id
+    name
+    viewed
+    createdAt
+    updatedAt
+    status
+  }
+}
+    `;
+
+/**
+ * __useGetChaptersQuery__
+ *
+ * To run a query within a React component, call `useGetChaptersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetChaptersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetChaptersQuery({
+ *   variables: {
+ *      chapterFilterDto: // value for 'chapterFilterDto'
+ *      paginationDto: // value for 'paginationDto'
+ *      orderByDto: // value for 'orderByDto'
+ *   },
+ * });
+ */
+export function useGetChaptersQuery(baseOptions?: Apollo.QueryHookOptions<GetChaptersQuery, GetChaptersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetChaptersQuery, GetChaptersQueryVariables>(GetChaptersDocument, options);
+      }
+export function useGetChaptersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetChaptersQuery, GetChaptersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetChaptersQuery, GetChaptersQueryVariables>(GetChaptersDocument, options);
+        }
+export function useGetChaptersSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetChaptersQuery, GetChaptersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetChaptersQuery, GetChaptersQueryVariables>(GetChaptersDocument, options);
+        }
+export type GetChaptersQueryHookResult = ReturnType<typeof useGetChaptersQuery>;
+export type GetChaptersLazyQueryHookResult = ReturnType<typeof useGetChaptersLazyQuery>;
+export type GetChaptersSuspenseQueryHookResult = ReturnType<typeof useGetChaptersSuspenseQuery>;
+export type GetChaptersQueryResult = Apollo.QueryResult<GetChaptersQuery, GetChaptersQueryVariables>;

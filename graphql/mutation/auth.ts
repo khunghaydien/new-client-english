@@ -7,9 +7,6 @@ export const LOGIN_USER = gql`
         id
         fullname
       }
-      roles{
-        name
-      }
     }
   }
 `
