@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { ReactNode } from "react";
 import { isEmpty } from "lodash";
 import { cn, getFirstNSegments } from "@/lib/utils";
 import {
@@ -12,6 +12,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 export type INavSidebar = {
+  icon?:ReactNode
   label: string;
   href: string;
   children: INavSidebar[];
@@ -33,7 +34,7 @@ const NestedAccordion = ({
       style={{ marginLeft: `${level * 16}px` }}
       defaultValue={getFirstNSegments(pathname)}
     >
-      {data.map(({ label, href, children }, index) => {
+      {data.map(({ label, href, children, icon }, index) => {
         return (
           <AccordionItem
             key={index}
@@ -42,19 +43,20 @@ const NestedAccordion = ({
           >
             {isEmpty(children) && (
               <Link
-                className={`rounded-lg p-2 hover:bg-muted cursor-pointer text-sm font-bold ${
+                className={`rounded-lg  py-3 px-2 hover:bg-muted cursor-pointer text-sm font-bold flex gap-3 items-center ${
                   pathname.includes(href)
                     ? "bg-primary hover:bg-primary text-white"
                     : ""
                 }`}
                 href={href}
               >
+                {icon}
                 {label}
               </Link>
             )}
             {!isEmpty(children) && (
               <>
-                <AccordionTrigger className="rounded-lg p-2 hover:bg-muted data-[state=open]:bg-secondary text-sm font-bold">
+                <AccordionTrigger className="rounded-lg py-3 px-2 hover:bg-muted data-[state=open]:bg-secondary text-sm font-bold">
                   {label}
                 </AccordionTrigger>
                 <AccordionContent>

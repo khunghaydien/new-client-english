@@ -66,6 +66,24 @@ export type ChapterUpdateDto = {
   type?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
+export type CreateAnswerDto = {
+  isCorrect?: InputMaybe<Scalars['Boolean']['input']>;
+  label?: InputMaybe<Scalars['String']['input']>;
+  value: Scalars['String']['input'];
+};
+
+export type CreateExerciseDto = {
+  construction: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  questions: Array<CreateQuestionDto>;
+  type: Scalars['String']['input'];
+};
+
+export type CreateQuestionDto = {
+  answers: Array<CreateAnswerDto>;
+  question: Scalars['String']['input'];
+};
+
 export type ErrorType = {
   __typename?: 'ErrorType';
   code?: Maybe<Scalars['String']['output']>;
@@ -109,6 +127,7 @@ export type LoginResponse = {
 export type Mutation = {
   __typename?: 'Mutation';
   createChapter: Chapter;
+  createExercise: Exercise;
   deleteChapter: Chapter;
   deleteUser: User;
   login: LoginResponse;
@@ -121,6 +140,12 @@ export type Mutation = {
 
 export type MutationCreateChapterArgs = {
   chapterCreateDto: ChapterCreateDto;
+};
+
+
+export type MutationCreateExerciseArgs = {
+  chapterId: Scalars['String']['input'];
+  createExerciseDto: CreateExerciseDto;
 };
 
 
@@ -161,7 +186,9 @@ export type PaginationDto = {
 
 export type Query = {
   __typename?: 'Query';
-  getChapters: Array<Chapter>;
+  getChapters?: Maybe<Array<Chapter>>;
+  getExerciseById?: Maybe<Exercise>;
+  getExercises?: Maybe<Array<Exercise>>;
   getUsers: Array<User>;
   hello: Scalars['String']['output'];
 };
@@ -171,6 +198,16 @@ export type QueryGetChaptersArgs = {
   chapterFilterDto?: InputMaybe<ChapterFilterDto>;
   orderByDto?: InputMaybe<OrderByDto>;
   paginationDto?: InputMaybe<PaginationDto>;
+};
+
+
+export type QueryGetExerciseByIdArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type QueryGetExercisesArgs = {
+  chapterId: Scalars['String']['input'];
 };
 
 export type Question = {
@@ -244,14 +281,30 @@ export type GetChaptersQueryVariables = Exact<{
 }>;
 
 
-export type GetChaptersQuery = { __typename?: 'Query', getChapters: Array<{ __typename?: 'Chapter', id: string, name: string, viewed: number, createdAt: any, updatedAt: any, status: string }> };
+export type GetChaptersQuery = { __typename?: 'Query', getChapters?: Array<{ __typename?: 'Chapter', id: string, name: string, viewed: number, createdAt: any, updatedAt: any, status: string, type: Array<string>, level: string }> | null };
+
+export type GetExercisesQueryVariables = Exact<{
+  chapterId: Scalars['String']['input'];
+}>;
+
+
+export type GetExercisesQuery = { __typename?: 'Query', getExercises?: Array<{ __typename?: 'Exercise', id: string }> | null };
+
+export type GetExerciseQueryVariables = Exact<{
+  id: Scalars['String']['input'];
+}>;
+
+
+export type GetExerciseQuery = { __typename?: 'Query', getExerciseById?: { __typename?: 'Exercise', id: string, name: string, construction: string, type: string, questions: Array<{ __typename?: 'Question', question: string, answers: Array<{ __typename?: 'Answer', id: string, label: string, value: string }> }> } | null };
 
 
 export const LoginUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"LoginUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"password"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"loginInput"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"password"},"value":{"kind":"Variable","name":{"kind":"Name","value":"password"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fullname"}}]}}]}}]}}]} as unknown as DocumentNode<LoginUserMutation, LoginUserMutationVariables>;
 export const LogoutUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"LogoutUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"logout"}}]}}]} as unknown as DocumentNode<LogoutUserMutation, LogoutUserMutationVariables>;
 export const RegisterUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RegisterUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"fullname"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"password"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"register"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"registerInput"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"fullname"},"value":{"kind":"Variable","name":{"kind":"Name","value":"fullname"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"password"},"value":{"kind":"Variable","name":{"kind":"Name","value":"password"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fullname"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]}}]} as unknown as DocumentNode<RegisterUserMutation, RegisterUserMutationVariables>;
 export const DeleteUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"deleteUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fullname"}}]}}]}}]} as unknown as DocumentNode<DeleteUserMutation, DeleteUserMutationVariables>;
-export const GetChaptersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetChapters"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"chapterFilterDto"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"ChapterFilterDto"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"paginationDto"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"PaginationDto"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderByDto"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"OrderByDto"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getChapters"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"chapterFilterDto"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chapterFilterDto"}}},{"kind":"Argument","name":{"kind":"Name","value":"paginationDto"},"value":{"kind":"Variable","name":{"kind":"Name","value":"paginationDto"}}},{"kind":"Argument","name":{"kind":"Name","value":"orderByDto"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderByDto"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"viewed"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]} as unknown as DocumentNode<GetChaptersQuery, GetChaptersQueryVariables>;
+export const GetChaptersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetChapters"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"chapterFilterDto"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"ChapterFilterDto"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"paginationDto"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"PaginationDto"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderByDto"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"OrderByDto"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getChapters"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"chapterFilterDto"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chapterFilterDto"}}},{"kind":"Argument","name":{"kind":"Name","value":"paginationDto"},"value":{"kind":"Variable","name":{"kind":"Name","value":"paginationDto"}}},{"kind":"Argument","name":{"kind":"Name","value":"orderByDto"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderByDto"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"viewed"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"level"}}]}}]}}]} as unknown as DocumentNode<GetChaptersQuery, GetChaptersQueryVariables>;
+export const GetExercisesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetExercises"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"chapterId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getExercises"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"chapterId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chapterId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<GetExercisesQuery, GetExercisesQueryVariables>;
+export const GetExerciseDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetExercise"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getExerciseById"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"construction"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"questions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"question"}},{"kind":"Field","name":{"kind":"Name","value":"answers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetExerciseQuery, GetExerciseQueryVariables>;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: { input: string; output: string; }
@@ -308,6 +361,24 @@ export type ChapterUpdateDto = {
   type?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
+export type CreateAnswerDto = {
+  isCorrect?: InputMaybe<Scalars['Boolean']['input']>;
+  label?: InputMaybe<Scalars['String']['input']>;
+  value: Scalars['String']['input'];
+};
+
+export type CreateExerciseDto = {
+  construction: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  questions: Array<CreateQuestionDto>;
+  type: Scalars['String']['input'];
+};
+
+export type CreateQuestionDto = {
+  answers: Array<CreateAnswerDto>;
+  question: Scalars['String']['input'];
+};
+
 export type ErrorType = {
   __typename?: 'ErrorType';
   code?: Maybe<Scalars['String']['output']>;
@@ -351,6 +422,7 @@ export type LoginResponse = {
 export type Mutation = {
   __typename?: 'Mutation';
   createChapter: Chapter;
+  createExercise: Exercise;
   deleteChapter: Chapter;
   deleteUser: User;
   login: LoginResponse;
@@ -363,6 +435,12 @@ export type Mutation = {
 
 export type MutationCreateChapterArgs = {
   chapterCreateDto: ChapterCreateDto;
+};
+
+
+export type MutationCreateExerciseArgs = {
+  chapterId: Scalars['String']['input'];
+  createExerciseDto: CreateExerciseDto;
 };
 
 
@@ -403,7 +481,9 @@ export type PaginationDto = {
 
 export type Query = {
   __typename?: 'Query';
-  getChapters: Array<Chapter>;
+  getChapters?: Maybe<Array<Chapter>>;
+  getExerciseById?: Maybe<Exercise>;
+  getExercises?: Maybe<Array<Exercise>>;
   getUsers: Array<User>;
   hello: Scalars['String']['output'];
 };
@@ -413,6 +493,16 @@ export type QueryGetChaptersArgs = {
   chapterFilterDto?: InputMaybe<ChapterFilterDto>;
   orderByDto?: InputMaybe<OrderByDto>;
   paginationDto?: InputMaybe<PaginationDto>;
+};
+
+
+export type QueryGetExerciseByIdArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type QueryGetExercisesArgs = {
+  chapterId: Scalars['String']['input'];
 };
 
 export type Question = {
@@ -486,7 +576,21 @@ export type GetChaptersQueryVariables = Exact<{
 }>;
 
 
-export type GetChaptersQuery = { __typename?: 'Query', getChapters: Array<{ __typename?: 'Chapter', id: string, name: string, viewed: number, createdAt: any, updatedAt: any, status: string }> };
+export type GetChaptersQuery = { __typename?: 'Query', getChapters?: Array<{ __typename?: 'Chapter', id: string, name: string, viewed: number, createdAt: any, updatedAt: any, status: string, type: Array<string>, level: string }> | null };
+
+export type GetExercisesQueryVariables = Exact<{
+  chapterId: Scalars['String']['input'];
+}>;
+
+
+export type GetExercisesQuery = { __typename?: 'Query', getExercises?: Array<{ __typename?: 'Exercise', id: string }> | null };
+
+export type GetExerciseQueryVariables = Exact<{
+  id: Scalars['String']['input'];
+}>;
+
+
+export type GetExerciseQuery = { __typename?: 'Query', getExerciseById?: { __typename?: 'Exercise', id: string, name: string, construction: string, type: string, questions: Array<{ __typename?: 'Question', question: string, answers: Array<{ __typename?: 'Answer', id: string, label: string, value: string }> }> } | null };
 
 
 export const LoginUserDocument = gql`
@@ -644,6 +748,8 @@ export const GetChaptersDocument = gql`
     createdAt
     updatedAt
     status
+    type
+    level
   }
 }
     `;
@@ -682,3 +788,94 @@ export type GetChaptersQueryHookResult = ReturnType<typeof useGetChaptersQuery>;
 export type GetChaptersLazyQueryHookResult = ReturnType<typeof useGetChaptersLazyQuery>;
 export type GetChaptersSuspenseQueryHookResult = ReturnType<typeof useGetChaptersSuspenseQuery>;
 export type GetChaptersQueryResult = Apollo.QueryResult<GetChaptersQuery, GetChaptersQueryVariables>;
+export const GetExercisesDocument = gql`
+    query GetExercises($chapterId: String!) {
+  getExercises(chapterId: $chapterId) {
+    id
+  }
+}
+    `;
+
+/**
+ * __useGetExercisesQuery__
+ *
+ * To run a query within a React component, call `useGetExercisesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetExercisesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetExercisesQuery({
+ *   variables: {
+ *      chapterId: // value for 'chapterId'
+ *   },
+ * });
+ */
+export function useGetExercisesQuery(baseOptions: Apollo.QueryHookOptions<GetExercisesQuery, GetExercisesQueryVariables> & ({ variables: GetExercisesQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetExercisesQuery, GetExercisesQueryVariables>(GetExercisesDocument, options);
+      }
+export function useGetExercisesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetExercisesQuery, GetExercisesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetExercisesQuery, GetExercisesQueryVariables>(GetExercisesDocument, options);
+        }
+export function useGetExercisesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetExercisesQuery, GetExercisesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetExercisesQuery, GetExercisesQueryVariables>(GetExercisesDocument, options);
+        }
+export type GetExercisesQueryHookResult = ReturnType<typeof useGetExercisesQuery>;
+export type GetExercisesLazyQueryHookResult = ReturnType<typeof useGetExercisesLazyQuery>;
+export type GetExercisesSuspenseQueryHookResult = ReturnType<typeof useGetExercisesSuspenseQuery>;
+export type GetExercisesQueryResult = Apollo.QueryResult<GetExercisesQuery, GetExercisesQueryVariables>;
+export const GetExerciseDocument = gql`
+    query GetExercise($id: String!) {
+  getExerciseById(id: $id) {
+    id
+    name
+    construction
+    type
+    questions {
+      question
+      answers {
+        id
+        label
+        value
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetExerciseQuery__
+ *
+ * To run a query within a React component, call `useGetExerciseQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetExerciseQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetExerciseQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetExerciseQuery(baseOptions: Apollo.QueryHookOptions<GetExerciseQuery, GetExerciseQueryVariables> & ({ variables: GetExerciseQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetExerciseQuery, GetExerciseQueryVariables>(GetExerciseDocument, options);
+      }
+export function useGetExerciseLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetExerciseQuery, GetExerciseQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetExerciseQuery, GetExerciseQueryVariables>(GetExerciseDocument, options);
+        }
+export function useGetExerciseSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetExerciseQuery, GetExerciseQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetExerciseQuery, GetExerciseQueryVariables>(GetExerciseDocument, options);
+        }
+export type GetExerciseQueryHookResult = ReturnType<typeof useGetExerciseQuery>;
+export type GetExerciseLazyQueryHookResult = ReturnType<typeof useGetExerciseLazyQuery>;
+export type GetExerciseSuspenseQueryHookResult = ReturnType<typeof useGetExerciseSuspenseQuery>;
+export type GetExerciseQueryResult = Apollo.QueryResult<GetExerciseQuery, GetExerciseQueryVariables>;

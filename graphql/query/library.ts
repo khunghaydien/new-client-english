@@ -21,3 +21,34 @@ export const GET_CHAPTERS = gql`
     }
   }
 `
+
+export const GET_EXERCISES = gql`
+ query GetExercises(
+    $chapterId: String!,
+  ) {
+    getExercises(chapterId:$chapterId){
+      id,
+    }
+  }
+`
+
+export const GET_EXERCISE_BY_ID = gql`
+ query GetExercise(
+    $id: String!,
+  ) {
+    getExerciseById(id:$id){
+      id,
+      name,
+      construction,
+      type,
+      questions{
+        question,
+        answers{
+          id,
+          label,
+          value
+        }
+      }
+    }
+  }
+`

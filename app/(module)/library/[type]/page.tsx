@@ -25,7 +25,7 @@ const ChapterCard = ({ chapter, onClick }: IChapterCard) => {
   return (
     <div
       className={
-        "cursor-pointer bg-primary/20 p-3 rounded-lg hover:bg-primary/30 dark:bg-muted dark:hover:bg-gray-500 dark:hover:text-foreground"
+        "cursor-pointer p-3 rounded-lg bg-muted hover:bg-primary/10"
       }
       onClick={() => onClick(id)}
     >
@@ -84,7 +84,7 @@ const NoData = () => {
   );
 };
 function page({ params }: { params: Params }) {
-  const { type, level } = params;
+  const { type } = params;
   const router = useRouter();
   const pathName = usePathname();
   const [writing, setWriting] = useState(false);
@@ -95,7 +95,6 @@ function page({ params }: { params: Params }) {
     variables: {
       chapterFilterDto: {
         type: type.toUpperCase(),
-        level: level.replace("-", "_").toUpperCase(),
       },
     },
   });
@@ -103,7 +102,6 @@ function page({ params }: { params: Params }) {
     refetch({
       chapterFilterDto: {
         type: type.toUpperCase(),
-        level: level.replace("-", "_").toUpperCase(),
         name: value,
       },
     });
@@ -127,7 +125,7 @@ function page({ params }: { params: Params }) {
         ) : (
           <>
             {isEmpty(data?.getChapters) && <NoData />}
-            {data?.getChapters.map((chapter: Chapter, index: number) => (
+            {data?.getChapters?.map((chapter: Chapter, index: number) => (
               <ChapterCard
                 key={index}
                 chapter={chapter}
