@@ -9,7 +9,7 @@ function layout({ children }: { children: ReactNode }) {
         <NavSidebar data={libraryRouter} />
       </nav>
       <section className="flex-grow h-full flex flex-col gap-1 p-6">
-        <div>{children}</div>
+        {children}
       </section>
     </div>
   );

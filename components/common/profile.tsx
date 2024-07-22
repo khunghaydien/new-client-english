@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { Suspense } from "react";
 import { useUserStore } from "@/stores/userStore";
 import Link from "next/link";
 import { useMutation } from "@apollo/client";
@@ -12,23 +12,22 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { Skeleton } from "../ui/skeleton";
 
 function Profile() {
   const router = useRouter();
   const [logoutUser] = useMutation(LOGOUT_USER);
-  const { fullname, image, id, logout } = useUserStore((state) => state);
+  const { fullname, id, logout } = useUserStore((state) => state);
 
   const handleLogout = async () => {
     try {
       logout();
       await logoutUser();
       router.push("/sign-in");
-    } catch (error) {
-      console.log("something went wrong: ", error);
-    }
+    } catch (error) {}
   };
   return (
-    <>
+    <Suspense fallback={<Skeleton className="h-[36px] w-[100px] rounded-lg" />}>
       {!id && (
         <div className="flex gap-4">
           <Button variant={"outline"}>
@@ -53,7 +52,7 @@ function Profile() {
           </DropdownMenuContent>
         </DropdownMenu>
       )}
-    </>
+    </Suspense>
   );
 }
 

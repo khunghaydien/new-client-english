@@ -12,7 +12,7 @@ import { useQuery } from "@apollo/client";
 import { GET_CHAPTERS } from "@/graphql/query/library";
 import { isEmpty } from "lodash";
 import { TbDatabaseOff } from "react-icons/tb";
-import { Skeleton } from "@/components/ui/skeleton";
+import { ListLoading } from "@/components/common/loading";
 
 interface IChapterCard {
   chapter: Chapter;
@@ -24,9 +24,7 @@ const ChapterCard = ({ chapter, onClick }: IChapterCard) => {
     chapter;
   return (
     <div
-      className={
-        "cursor-pointer p-3 rounded-lg bg-muted hover:bg-primary/10"
-      }
+      className={"cursor-pointer p-3 rounded-lg bg-muted hover:bg-primary/10"}
       onClick={() => onClick(id)}
     >
       <div className="flex gap-3 flex-col">
@@ -53,10 +51,10 @@ const ChapterCard = ({ chapter, onClick }: IChapterCard) => {
             {<Badge variant={"outline"}>{level}</Badge>}
           </div>
           <div className="flex flex-center justify-between text-sm">
-            {formatDistance(createdAt, new Date(), {
+            {formatDistance(new Date(createdAt), new Date(), {
               addSuffix: true,
             })}
-            {status === "published" && (
+            {status === "PUBLISHED" && (
               <div className="flex items-center gap-2">
                 <LuView className="" />
                 <span>{viewed.toLocaleString()}</span>
@@ -70,11 +68,7 @@ const ChapterCard = ({ chapter, onClick }: IChapterCard) => {
     </div>
   );
 };
-const LoadingChapter = () => {
-  return Array.from({ length: 5 }).map((_, index) => (
-    <Skeleton key={index} className="w-full h-[100px] rounded-lg" />
-  ));
-};
+
 const NoData = () => {
   return (
     <div className="flex flex-col w-full h-full min-h-[500px] gap-10 items-center justify-center text-muted-foreground font-bold">
@@ -83,7 +77,8 @@ const NoData = () => {
     </div>
   );
 };
-function page({ params }: { params: Params }) {
+
+const PageComponent = ({ params }: { params: Params }) => {
   const { type } = params;
   const router = useRouter();
   const pathName = usePathname();
@@ -121,7 +116,7 @@ function page({ params }: { params: Params }) {
       </div>
       <div className="flex flex-col gap-3">
         {loading || writing ? (
-          <LoadingChapter />
+          <ListLoading height={100} quantity={5} direction="vertical" />
         ) : (
           <>
             {isEmpty(data?.getChapters) && <NoData />}
@@ -137,6 +132,6 @@ function page({ params }: { params: Params }) {
       </div>
     </div>
   );
-}
+};
 
-export default page;
+export default PageComponent;

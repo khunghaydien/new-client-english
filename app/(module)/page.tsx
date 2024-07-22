@@ -1,7 +1,7 @@
 import React from "react";
 
-function page() {
+function PageComponent() {
   return <div>Home</div>;
 }
 
-export default page;
+export default PageComponent;

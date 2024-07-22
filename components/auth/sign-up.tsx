@@ -20,7 +20,7 @@ const initialValues = {
   confirmPassword: "",
 };
 type IRegister = typeof initialValues;
-function page() {
+function PageComponent() {
   const [registerUser, { loading }] = useMutation(REGISTER_USER);
   const router = useRouter();
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -163,4 +163,4 @@ function page() {
   );
 }
 
-export default page;
+export default PageComponent;

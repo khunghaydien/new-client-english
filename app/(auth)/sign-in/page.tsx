@@ -4,7 +4,7 @@ import React, { lazy, Suspense } from "react";
 
 const SignIn = lazy(() => import("@/components/auth/sign-in"));
 
-function page() {
+function PageComponent() {
   return (
     <Suspense fallback={<WholeLoading />}>
       <SignIn />
@@ -12,4 +12,4 @@ function page() {
   );
 }
 
-export default page;
+export default PageComponent;

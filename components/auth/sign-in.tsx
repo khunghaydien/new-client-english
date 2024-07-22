@@ -20,7 +20,7 @@ const initialValues = {
   password: "",
 };
 
-function page() {
+function PageComponent() {
   const { loginValidate } = authValidate();
   const setUser = useUserStore((state) => state.setUser);
   const router = useRouter();
@@ -111,7 +111,7 @@ function page() {
         </Button>
       </form>
       <div className="fixed flex items-center justify-center py-5 left-0 bottom-0 border-t w-full">
-        <span className="mr-2">Don't have an account?</span>
+        <span className="mr-2">{`Don't have an account?`}</span>
         <Link href={"/sign-up"} className="text-blue-500">
           <span>Sign up</span>
         </Link>
@@ -120,4 +120,4 @@ function page() {
   );
 }
 
-export default page;
+export default PageComponent;
