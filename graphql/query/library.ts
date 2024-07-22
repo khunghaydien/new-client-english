@@ -17,7 +17,7 @@ export const GET_CHAPTERS = gql`
       updatedAt
       status
       type
-      level
+      difficulty
     }
   }
 `

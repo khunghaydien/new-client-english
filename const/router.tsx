@@ -7,48 +7,60 @@ import { FcReading } from "react-icons/fc";
 import { CiSpeaker } from "react-icons/ci";
 import { GiCardRandom } from "react-icons/gi";
 
-
 export const libraryRouter: INavSidebar[] = [
-    {
-        label: "Grammar",
-        href: "/library/grammar",
+  {
+    label: "Grammar",
+    href: "/library/grammar",
+    children: [],
+    icon: <TbTextGrammar />,
+  },
+  {
+    label: "Vacabulary",
+    href: "/library/vacabulary",
+    children: [],
+    icon: <FaTextWidth />,
+  },
+  {
+    label: "Listening",
+    href: "/library/listening",
+    children: [],
+    icon: <GrAssistListening />,
+  },
+  {
+    label: "Writing",
+    href: "/library/writing",
+    children: [],
+    icon: <TbWritingSign />,
+  },
+  {
+    label: "Reading",
+    href: "/library/reading",
+    children: [],
+    icon: <FcReading />,
+  },
+  {
+    label: "Speaking",
+    href: "/library/speaking",
+    children: [],
+    icon: <CiSpeaker />,
+  },
+  {
+    label: "Exam",
+    href: "/library/ielts",
+    children: [
+      {
+        label: "Ielts",
+        href: "/library/ielts",
         children: [],
-        icon: <TbTextGrammar />
-    },
-    {
-        label: "Vacabulary",
-        href: "/library/vacabulary",
+        icon: <FcReading />,
+      },
+      {
+        label: "Toeic",
+        href: "/library/toeic",
         children: [],
-        icon: <FaTextWidth />
-    },
-    {
-        label: "Listening",
-        href: "/library/listening",
-        children: [],
-        icon: <GrAssistListening />
-    },
-    {
-        label: "Writing",
-        href: "/library/writing",
-        children: [],
-        icon: <TbWritingSign />
-    },
-    {
-        label: "Reading",
-        href: "/library/reading",
-        children: [],
-        icon: <FcReading />
-    },
-    {
-        label: "Speaking",
-        href: "/library/speaking",
-        children: [],
-        icon: <CiSpeaker />
-    },
-    {
-        label: "Custom",
-        href: "/library/custom",
-        children: [],
-        icon: <GiCardRandom />
-    }
+        icon: <CiSpeaker />,
+      },
+    ],
+    icon: <GiCardRandom />,
+  },
 ];

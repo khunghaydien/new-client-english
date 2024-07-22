@@ -12,7 +12,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 export type INavSidebar = {
-  icon?:ReactNode
+  icon?: ReactNode;
   label: string;
   href: string;
   children: INavSidebar[];
@@ -20,10 +20,10 @@ export type INavSidebar = {
 
 const NestedAccordion = ({
   data,
-  level = 0,
+  difficulty = 0,
 }: {
   data: INavSidebar[];
-  level: number;
+  difficulty: number;
 }) => {
   const pathname = usePathname();
   return (
@@ -31,7 +31,7 @@ const NestedAccordion = ({
       type="single"
       collapsible
       className={"gap-2 flex flex-col"}
-      style={{ marginLeft: `${level * 16}px` }}
+      style={{ marginLeft: `${difficulty * 16}px` }}
       defaultValue={getFirstNSegments(pathname)}
     >
       {data.map(({ label, href, children, icon }, index) => {
@@ -60,7 +60,10 @@ const NestedAccordion = ({
                   {label}
                 </AccordionTrigger>
                 <AccordionContent>
-                  <NestedAccordion data={children} level={level + 1} />
+                  <NestedAccordion
+                    data={children}
+                    difficulty={difficulty + 1}
+                  />
                 </AccordionContent>
               </>
             )}
@@ -72,7 +75,7 @@ const NestedAccordion = ({
 };
 
 function NavSidebar({ data }: { data: INavSidebar[] }) {
-  return <NestedAccordion data={data} level={0} />;
+  return <NestedAccordion data={data} difficulty={0} />;
 }
 
 export default NavSidebar;

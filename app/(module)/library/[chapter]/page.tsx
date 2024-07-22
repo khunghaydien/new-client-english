@@ -20,7 +20,7 @@ interface IChapterCard {
 }
 
 const ChapterCard = ({ chapter, onClick }: IChapterCard) => {
-  const { id, name, description, type, createdAt, viewed, status, level } =
+  const { id, name, description, type, createdAt, viewed, status, difficulty } =
     chapter;
   return (
     <div
@@ -48,7 +48,7 @@ const ChapterCard = ({ chapter, onClick }: IChapterCard) => {
                 {item}
               </Badge>
             ))}
-            {<Badge variant={"outline"}>{level}</Badge>}
+            {<Badge variant={"outline"}>{difficulty}</Badge>}
           </div>
           <div className="flex flex-center justify-between text-sm">
             {formatDistance(new Date(createdAt), new Date(), {
@@ -79,7 +79,7 @@ const NoData = () => {
 };
 
 const PageComponent = ({ params }: { params: Params }) => {
-  const { type } = params;
+  const { chapter } = params;
   const router = useRouter();
   const pathName = usePathname();
   const [writing, setWriting] = useState(false);
@@ -89,14 +89,14 @@ const PageComponent = ({ params }: { params: Params }) => {
   const { data, refetch, loading } = useQuery(GET_CHAPTERS, {
     variables: {
       chapterFilterDto: {
-        type: type.toUpperCase(),
+        type: chapter.toUpperCase(),
       },
     },
   });
   const handleSearch = (value: string) => {
     refetch({
       chapterFilterDto: {
-        type: type.toUpperCase(),
+        type: chapter.toUpperCase(),
         name: value,
       },
     });

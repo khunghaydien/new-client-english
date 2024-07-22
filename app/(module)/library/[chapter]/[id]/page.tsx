@@ -25,7 +25,6 @@ const Questions = ({
   return (
     <ScrollArea style={{ height: "calc(100vh - 250px)" }}>
       <div className="flex flex-col gap-4">
-        {" "}
         {questions?.map(
           ({ question, answers, id }: IQuestion, questionIndex: number) => (
             <div key={questionIndex} className="flex flex-col gap-2">
@@ -150,12 +149,12 @@ const Exercise = ({ exerciseId }: { exerciseId: string }) => {
 };
 
 function PageComponent() {
-  const { chapter } = useParams();
+  const { id } = useParams();
   const { data: exercises, loading: exercisesLoading } = useQuery(
     GET_EXERCISES,
     {
-      skip: !chapter,
-      variables: { chapterId: chapter },
+      skip: !id,
+      variables: { chapterId: id },
     }
   );
   const [exerciseId, setExerciseId] = useState("");
