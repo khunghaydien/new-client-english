@@ -13,6 +13,8 @@ import { GET_CHAPTERS } from "@/graphql/query/library";
 import { isEmpty } from "lodash";
 import { TbDatabaseOff } from "react-icons/tb";
 import { ListLoading } from "@/components/common/loading";
+import InputSearch, { ISearchOutput } from "@/components/ui/input-search";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface IChapterCard {
   chapter: Chapter;
@@ -93,11 +95,11 @@ const PageComponent = ({ params }: { params: Params }) => {
       },
     },
   });
-  const handleSearch = (value: string) => {
+  const handleSearch = (search: ISearchOutput) => {
     refetch({
       chapterFilterDto: {
         type: chapter.toUpperCase(),
-        name: value,
+        name: search.label,
       },
     });
   };
@@ -105,31 +107,30 @@ const PageComponent = ({ params }: { params: Params }) => {
     <div className="flex flex-col gap-6">
       <div className="flex gap-6 items-start w-full">
         <div className="max-w-[600px] w-full">
-          <InputAutoComplete
-            setWriting={setWriting}
-            className=""
-            placeholder="Search..."
-            onChange={handleSearch}
-            suggestions={[]}
+          <InputSearch
+            scope={[chapter.toUpperCase()]}
+            onSearch={handleSearch}
           />
         </div>
       </div>
-      <div className="flex flex-col gap-3">
-        {loading || writing ? (
-          <ListLoading height={100} quantity={5} direction="vertical" />
-        ) : (
-          <>
-            {isEmpty(data?.getChapters) && <NoData />}
-            {data?.getChapters?.map((chapter: Chapter, index: number) => (
-              <ChapterCard
-                key={index}
-                chapter={chapter}
-                onClick={handleClick}
-              />
-            ))}
-          </>
-        )}
-      </div>
+      <ScrollArea style={{ height: "calc(100vh - 250px)" }}>
+        <div className="flex flex-col gap-3 pr-6">
+          {loading || writing ? (
+            <ListLoading height={100} quantity={5} direction="vertical" />
+          ) : (
+            <>
+              {isEmpty(data?.getChapters) && <NoData />}
+              {data?.getChapters?.map((chapter: Chapter, index: number) => (
+                <ChapterCard
+                  key={index}
+                  chapter={chapter}
+                  onClick={handleClick}
+                />
+              ))}
+            </>
+          )}
+        </div>
+      </ScrollArea>
     </div>
   );
 };
