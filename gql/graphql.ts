@@ -26,7 +26,7 @@ export type Answer = {
   id: Scalars['String']['output'];
   isCorrect: Scalars['Boolean']['output'];
   label: Scalars['String']['output'];
-  question: Question;
+  question?: Maybe<Question>;
   questionId: Scalars['String']['output'];
   value: Scalars['String']['output'];
 };
@@ -36,8 +36,8 @@ export type Chapter = {
   createdAt: Scalars['DateTime']['output'];
   description: Scalars['String']['output'];
   difficulty: Scalars['String']['output'];
-  exercises: Array<Exercise>;
-  explanations: Array<Explanation>;
+  exercises?: Maybe<Array<Exercise>>;
+  explanations?: Maybe<Array<Explanation>>;
   id: Scalars['String']['output'];
   name: Scalars['String']['output'];
   status: Scalars['String']['output'];
@@ -84,6 +84,12 @@ export type CreateQuestionDto = {
   question: Scalars['String']['input'];
 };
 
+export type CreateSearchDto = {
+  id: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  scope?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
 export type ErrorType = {
   __typename?: 'ErrorType';
   code?: Maybe<Scalars['String']['output']>;
@@ -92,13 +98,13 @@ export type ErrorType = {
 
 export type Exercise = {
   __typename?: 'Exercise';
-  chapter: Chapter;
+  chapter?: Maybe<Chapter>;
   chapterId: Scalars['String']['output'];
   construction: Scalars['String']['output'];
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['String']['output'];
   name: Scalars['String']['output'];
-  questions: Array<Question>;
+  questions?: Maybe<Array<Question>>;
   type: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
@@ -127,14 +133,16 @@ export type LoginResponse = {
 export type Mutation = {
   __typename?: 'Mutation';
   createChapter?: Maybe<Chapter>;
-  createExercise: Exercise;
-  deleteChapter: Chapter;
+  createExercise?: Maybe<Exercise>;
+  createSearch?: Maybe<Search>;
+  deleteChapter?: Maybe<Chapter>;
+  deleteSearch?: Maybe<Search>;
   deleteUser: User;
   login: LoginResponse;
   logout: Scalars['String']['output'];
   refreshToken: Scalars['String']['output'];
   register: RegisterResponse;
-  updateChapter: Chapter;
+  updateChapter?: Maybe<Chapter>;
 };
 
 
@@ -149,7 +157,17 @@ export type MutationCreateExerciseArgs = {
 };
 
 
+export type MutationCreateSearchArgs = {
+  searchCreateDto: CreateSearchDto;
+};
+
+
 export type MutationDeleteChapterArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type MutationDeleteSearchArgs = {
   id: Scalars['String']['input'];
 };
 
@@ -219,9 +237,9 @@ export type QueryGetSearchsArgs = {
 
 export type Question = {
   __typename?: 'Question';
-  answers: Array<Answer>;
+  answers?: Maybe<Array<Answer>>;
   createdAt: Scalars['DateTime']['output'];
-  exercise: Exercise;
+  exercise?: Maybe<Exercise>;
   exerciseId: Scalars['String']['output'];
   id: Scalars['String']['output'];
   question: Scalars['String']['output'];
@@ -242,9 +260,10 @@ export type RegisterResponse = {
 
 export type Search = {
   __typename?: 'Search';
+  description?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   name: Scalars['String']['output'];
-  scope: Array<Scalars['String']['output']>;
+  scope?: Maybe<Array<Scalars['String']['output']>>;
 };
 
 export type SearchFilterDto = {
@@ -314,7 +333,7 @@ export type GetExerciseQueryVariables = Exact<{
 }>;
 
 
-export type GetExerciseQuery = { __typename?: 'Query', getExerciseById?: { __typename?: 'Exercise', id: string, name: string, construction: string, type: string, questions: Array<{ __typename?: 'Question', question: string, answers: Array<{ __typename?: 'Answer', id: string, label: string, value: string }> }> } | null };
+export type GetExerciseQuery = { __typename?: 'Query', getExerciseById?: { __typename?: 'Exercise', id: string, name: string, construction: string, type: string, questions?: Array<{ __typename?: 'Question', question: string, answers?: Array<{ __typename?: 'Answer', id: string, label: string, value: string }> | null }> | null } | null };
 
 export type GetSearchsQueryVariables = Exact<{
   searchFilterDto?: InputMaybe<SearchFilterDto>;
@@ -322,7 +341,7 @@ export type GetSearchsQueryVariables = Exact<{
 }>;
 
 
-export type GetSearchsQuery = { __typename?: 'Query', getSearchs?: Array<{ __typename?: 'Search', id: string, name: string, scope: Array<string> }> | null };
+export type GetSearchsQuery = { __typename?: 'Query', getSearchs?: Array<{ __typename?: 'Search', id: string, name: string, scope?: Array<string> | null, description?: string | null }> | null };
 
 
 export const LoginUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"LoginUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"password"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"loginInput"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"password"},"value":{"kind":"Variable","name":{"kind":"Name","value":"password"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fullname"}}]}}]}}]}}]} as unknown as DocumentNode<LoginUserMutation, LoginUserMutationVariables>;
@@ -332,7 +351,7 @@ export const DeleteUserDocument = {"kind":"Document","definitions":[{"kind":"Ope
 export const GetChaptersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetChapters"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"chapterFilterDto"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"ChapterFilterDto"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"paginationDto"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"PaginationDto"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderByDto"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"OrderByDto"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getChapters"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"chapterFilterDto"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chapterFilterDto"}}},{"kind":"Argument","name":{"kind":"Name","value":"paginationDto"},"value":{"kind":"Variable","name":{"kind":"Name","value":"paginationDto"}}},{"kind":"Argument","name":{"kind":"Name","value":"orderByDto"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderByDto"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"viewed"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"difficulty"}}]}}]}}]} as unknown as DocumentNode<GetChaptersQuery, GetChaptersQueryVariables>;
 export const GetExercisesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetExercises"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"chapterId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getExercises"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"chapterId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chapterId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<GetExercisesQuery, GetExercisesQueryVariables>;
 export const GetExerciseDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetExercise"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getExerciseById"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"construction"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"questions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"question"}},{"kind":"Field","name":{"kind":"Name","value":"answers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetExerciseQuery, GetExerciseQueryVariables>;
-export const GetSearchsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetSearchs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"searchFilterDto"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"SearchFilterDto"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"paginationDto"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"PaginationDto"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getSearchs"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"searchFilterDto"},"value":{"kind":"Variable","name":{"kind":"Name","value":"searchFilterDto"}}},{"kind":"Argument","name":{"kind":"Name","value":"paginationDto"},"value":{"kind":"Variable","name":{"kind":"Name","value":"paginationDto"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"scope"}}]}}]}}]} as unknown as DocumentNode<GetSearchsQuery, GetSearchsQueryVariables>;
+export const GetSearchsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetSearchs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"searchFilterDto"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"SearchFilterDto"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"paginationDto"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"PaginationDto"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getSearchs"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"searchFilterDto"},"value":{"kind":"Variable","name":{"kind":"Name","value":"searchFilterDto"}}},{"kind":"Argument","name":{"kind":"Name","value":"paginationDto"},"value":{"kind":"Variable","name":{"kind":"Name","value":"paginationDto"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"scope"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]} as unknown as DocumentNode<GetSearchsQuery, GetSearchsQueryVariables>;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: { input: string; output: string; }
@@ -349,7 +368,7 @@ export type Answer = {
   id: Scalars['String']['output'];
   isCorrect: Scalars['Boolean']['output'];
   label: Scalars['String']['output'];
-  question: Question;
+  question?: Maybe<Question>;
   questionId: Scalars['String']['output'];
   value: Scalars['String']['output'];
 };
@@ -359,8 +378,8 @@ export type Chapter = {
   createdAt: Scalars['DateTime']['output'];
   description: Scalars['String']['output'];
   difficulty: Scalars['String']['output'];
-  exercises: Array<Exercise>;
-  explanations: Array<Explanation>;
+  exercises?: Maybe<Array<Exercise>>;
+  explanations?: Maybe<Array<Explanation>>;
   id: Scalars['String']['output'];
   name: Scalars['String']['output'];
   status: Scalars['String']['output'];
@@ -407,6 +426,12 @@ export type CreateQuestionDto = {
   question: Scalars['String']['input'];
 };
 
+export type CreateSearchDto = {
+  id: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  scope?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
 export type ErrorType = {
   __typename?: 'ErrorType';
   code?: Maybe<Scalars['String']['output']>;
@@ -415,13 +440,13 @@ export type ErrorType = {
 
 export type Exercise = {
   __typename?: 'Exercise';
-  chapter: Chapter;
+  chapter?: Maybe<Chapter>;
   chapterId: Scalars['String']['output'];
   construction: Scalars['String']['output'];
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['String']['output'];
   name: Scalars['String']['output'];
-  questions: Array<Question>;
+  questions?: Maybe<Array<Question>>;
   type: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
@@ -450,14 +475,16 @@ export type LoginResponse = {
 export type Mutation = {
   __typename?: 'Mutation';
   createChapter?: Maybe<Chapter>;
-  createExercise: Exercise;
-  deleteChapter: Chapter;
+  createExercise?: Maybe<Exercise>;
+  createSearch?: Maybe<Search>;
+  deleteChapter?: Maybe<Chapter>;
+  deleteSearch?: Maybe<Search>;
   deleteUser: User;
   login: LoginResponse;
   logout: Scalars['String']['output'];
   refreshToken: Scalars['String']['output'];
   register: RegisterResponse;
-  updateChapter: Chapter;
+  updateChapter?: Maybe<Chapter>;
 };
 
 
@@ -472,7 +499,17 @@ export type MutationCreateExerciseArgs = {
 };
 
 
+export type MutationCreateSearchArgs = {
+  searchCreateDto: CreateSearchDto;
+};
+
+
 export type MutationDeleteChapterArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type MutationDeleteSearchArgs = {
   id: Scalars['String']['input'];
 };
 
@@ -542,9 +579,9 @@ export type QueryGetSearchsArgs = {
 
 export type Question = {
   __typename?: 'Question';
-  answers: Array<Answer>;
+  answers?: Maybe<Array<Answer>>;
   createdAt: Scalars['DateTime']['output'];
-  exercise: Exercise;
+  exercise?: Maybe<Exercise>;
   exerciseId: Scalars['String']['output'];
   id: Scalars['String']['output'];
   question: Scalars['String']['output'];
@@ -565,9 +602,10 @@ export type RegisterResponse = {
 
 export type Search = {
   __typename?: 'Search';
+  description?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   name: Scalars['String']['output'];
-  scope: Array<Scalars['String']['output']>;
+  scope?: Maybe<Array<Scalars['String']['output']>>;
 };
 
 export type SearchFilterDto = {
@@ -637,7 +675,7 @@ export type GetExerciseQueryVariables = Exact<{
 }>;
 
 
-export type GetExerciseQuery = { __typename?: 'Query', getExerciseById?: { __typename?: 'Exercise', id: string, name: string, construction: string, type: string, questions: Array<{ __typename?: 'Question', question: string, answers: Array<{ __typename?: 'Answer', id: string, label: string, value: string }> }> } | null };
+export type GetExerciseQuery = { __typename?: 'Query', getExerciseById?: { __typename?: 'Exercise', id: string, name: string, construction: string, type: string, questions?: Array<{ __typename?: 'Question', question: string, answers?: Array<{ __typename?: 'Answer', id: string, label: string, value: string }> | null }> | null } | null };
 
 export type GetSearchsQueryVariables = Exact<{
   searchFilterDto?: InputMaybe<SearchFilterDto>;
@@ -645,7 +683,7 @@ export type GetSearchsQueryVariables = Exact<{
 }>;
 
 
-export type GetSearchsQuery = { __typename?: 'Query', getSearchs?: Array<{ __typename?: 'Search', id: string, name: string, scope: Array<string> }> | null };
+export type GetSearchsQuery = { __typename?: 'Query', getSearchs?: Array<{ __typename?: 'Search', id: string, name: string, scope?: Array<string> | null, description?: string | null }> | null };
 
 
 export const LoginUserDocument = gql`
@@ -940,6 +978,7 @@ export const GetSearchsDocument = gql`
     id
     name
     scope
+    description
   }
 }
     `;

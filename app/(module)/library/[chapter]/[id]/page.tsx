@@ -39,7 +39,7 @@ const Questions = ({
                 onValueChange={(value: string) => onChange(value, id)}
                 className="answer flex items-center w-full box-border gap-6"
               >
-                {answers.map(
+                {answers?.map(
                   ({ value, label, id }: IAnswer, answerIndex: number) => (
                     <div
                       className="flex items-center space-x-2 flex-grow w-[250px]"

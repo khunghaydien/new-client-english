@@ -15,8 +15,8 @@ export const libraryRouter: INavSidebar[] = [
     icon: <TbTextGrammar />,
   },
   {
-    label: "Vacabulary",
-    href: "/library/vacabulary",
+    label: "Vocabulary",
+    href: "/library/vocabulary",
     children: [],
     icon: <FaTextWidth />,
   },

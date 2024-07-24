@@ -11,6 +11,7 @@ export const GET_SEARCHS = gql`
       id
       name
       scope
+      description
     }
   }
 `

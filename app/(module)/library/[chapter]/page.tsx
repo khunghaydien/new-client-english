@@ -1,12 +1,11 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
-import React, { useState } from "react";
+import React from "react";
 import { LuView } from "react-icons/lu";
 import { FaWpforms } from "react-icons/fa";
 import { formatDistance } from "date-fns";
 import { usePathname, useRouter } from "next/navigation";
-import InputAutoComplete from "@/components/ui/input-auto-complete";
 import { Chapter } from "@/gql/graphql";
 import { useQuery } from "@apollo/client";
 import { GET_CHAPTERS } from "@/graphql/query/library";
@@ -15,6 +14,8 @@ import { TbDatabaseOff } from "react-icons/tb";
 import { ListLoading } from "@/components/common/loading";
 import InputSearch, { ISearchOutput } from "@/components/ui/input-search";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { categorize } from "@/lib/utils";
+import { DIFFICULTY_MAPPING } from "@/const/library";
 
 interface IChapterCard {
   chapter: Chapter;
@@ -84,10 +85,11 @@ const PageComponent = ({ params }: { params: Params }) => {
   const { chapter } = params;
   const router = useRouter();
   const pathName = usePathname();
-  const [writing, setWriting] = useState(false);
+
   const handleClick = (id: string) => {
     router.push(`${pathName}/${id}`);
   };
+
   const { data, refetch, loading } = useQuery(GET_CHAPTERS, {
     variables: {
       chapterFilterDto: {
@@ -95,14 +97,29 @@ const PageComponent = ({ params }: { params: Params }) => {
       },
     },
   });
+
   const handleSearch = (search: ISearchOutput) => {
-    refetch({
-      chapterFilterDto: {
-        type: chapter.toUpperCase(),
-        name: search.label,
-      },
-    });
+    const chapterFilterDto: any = {
+      type: chapter.toUpperCase(),
+    };
+    if (search.value) {
+      if (!isEmpty(search.value.scope)) {
+        chapterFilterDto.difficulty = categorize(
+          search.value.scope ?? []
+        ).EDIFFICULTY;
+        chapterFilterDto.name = search.label;
+      } else {
+        const description = search.value.description;
+        if (description && DIFFICULTY_MAPPING[description]) {
+          chapterFilterDto.difficulty = DIFFICULTY_MAPPING[description];
+        }
+      }
+    } else {
+      chapterFilterDto.name = search.label;
+    }
+    refetch({ chapterFilterDto });
   };
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex gap-6 items-start w-full">
@@ -115,7 +132,7 @@ const PageComponent = ({ params }: { params: Params }) => {
       </div>
       <ScrollArea style={{ height: "calc(100vh - 250px)" }}>
         <div className="flex flex-col gap-3 pr-6">
-          {loading || writing ? (
+          {loading ? (
             <ListLoading height={100} quantity={5} direction="vertical" />
           ) : (
             <>

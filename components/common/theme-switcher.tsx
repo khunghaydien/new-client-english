@@ -6,7 +6,7 @@ import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 function ThemeSwitcher() {
   const { theme, setTheme } = useTheme();
   return (
-    <Tabs defaultValue={theme ?? "dark"}>
+    <Tabs defaultValue={theme ?? ""}>
       <TabsList className="border">
         <TabsTrigger value="light" onClick={() => setTheme("light")}>
           <SunIcon className="h-[1.2rem w-[1.2rem]"></SunIcon>
