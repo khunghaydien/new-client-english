@@ -26,6 +26,7 @@ function Profile() {
       router.push("/sign-in");
     } catch (error) {}
   };
+
   return (
     <Suspense fallback={<Skeleton className="h-[36px] w-[100px] rounded-lg" />}>
       {!id && (

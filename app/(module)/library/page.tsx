@@ -1,7 +1,8 @@
 import React from "react";
+import ChapterList from "./_component/ChapterList";
 
 function page() {
-  return <div>s</div>;
+  return <ChapterList />;
 }
 
 export default page;
