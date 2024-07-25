@@ -167,7 +167,7 @@ function PageComponent() {
   return (
     <Tabs defaultValue={"exercise"}>
       <div className="flex justify-between">
-        <TabsList className="border">
+        <TabsList>
           <TabsTrigger value="exercise">
             <div>Exercises</div>
           </TabsTrigger>

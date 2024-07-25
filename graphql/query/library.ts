@@ -10,14 +10,22 @@ export const GET_CHAPTERS = gql`
       paginationDto: $paginationDto,
       orderByDto: $orderByDto
     ) {
-      id
-      name
-      viewed
-      createdAt
-      updatedAt
-      status
-      type
-      difficulty
+      chapters{
+        id
+        name
+        viewed
+        createdAt
+        updatedAt
+        status
+        type
+        difficulty
+      }  
+      metadata{
+        currentPage
+        pageSize
+        totalElements
+        totalPages
+      }
     }
   }
 `

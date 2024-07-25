@@ -7,7 +7,7 @@ function ThemeSwitcher() {
   const { theme, setTheme } = useTheme();
   return (
     <Tabs defaultValue={theme ?? ""}>
-      <TabsList className="border">
+      <TabsList>
         <TabsTrigger value="light" onClick={() => setTheme("light")}>
           <SunIcon className="h-[1.2rem w-[1.2rem]"></SunIcon>
         </TabsTrigger>

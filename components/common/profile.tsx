@@ -26,6 +26,7 @@ function Profile() {
       router.push("/sign-in");
     } catch (error) {}
   };
+
   return (
     <Suspense fallback={<Skeleton className="h-[36px] w-[100px] rounded-lg" />}>
       {!id && (
@@ -46,9 +47,9 @@ function Profile() {
         <DropdownMenu>
           <DropdownMenuTrigger>{fullname}</DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem onClick={() => {}}>Profile</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => {}}>Settings</DropdownMenuItem>
-            <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
+            <DropdownMenuItem className="min-w-40" onClick={() => {}}>Profile</DropdownMenuItem>
+            <DropdownMenuItem className="min-w-40" onClick={() => {}}>Settings</DropdownMenuItem>
+            <DropdownMenuItem className="min-w-40" onClick={handleLogout}>Logout</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )}

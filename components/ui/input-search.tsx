@@ -112,7 +112,7 @@ const InputSearch = ({ scope, onSearch }: IInputSearch) => {
         value={search.label}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
-        className={"w-full pr-8"}
+        className={"w-full pr-8 bg-muted"}
         placeholder={"Search..."}
         ref={inputRef}
       />
@@ -125,7 +125,7 @@ const InputSearch = ({ scope, onSearch }: IInputSearch) => {
       </div>
 
       {showSearchEngine && !isEmpty(data?.getSearchs) && (
-        <ul className="animate-in fade-in-0 zoom-in-95 absolute top-10 z-10 w-full rounded-lg outline-none bg-white dark:bg-black border p-2">
+        <ul className="animate-in fade-in-0 zoom-in-95 absolute top-10 z-10 w-full rounded-lg outline-none bg-muted p-2 shadow-lg border-b-2 border-primary">
           {loading ? (
             <div className="flex items-center justify-center">
               <ImSpinner2 className="animate-spin w-8 h-8 text-primary" />
@@ -136,8 +136,8 @@ const InputSearch = ({ scope, onSearch }: IInputSearch) => {
                 <li
                   key={search.id}
                   onClick={() => handleClickSearchEngine(search)}
-                  className={`cursor-pointer hover:bg-secondary px-3 py-1 rounded-lg  ${
-                    index === activeIndex ? "bg-secondary" : ""
+                  className={`cursor-pointer hover:bg-background px-3 py-1 rounded-lg  ${
+                    index === activeIndex ? "bg-background" : ""
                   }`}
                 >
                   {formatLabel(
