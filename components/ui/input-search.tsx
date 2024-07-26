@@ -10,6 +10,7 @@ import { useClickOutside } from "@/lib/utils";
 import { debounce } from "lodash";
 import { INPUT_TIME_DELAY } from "@/const/app";
 import { FaBan } from "react-icons/fa";
+import clsx from "clsx";
 
 export interface ISearchOutput {
   value?: ISearch | null;
@@ -19,9 +20,10 @@ export interface ISearchOutput {
 interface IInputSearch {
   scope?: String[];
   onSearch: (search: ISearchOutput) => void;
+  className?: string;
 }
 
-const InputSearch = ({ scope, onSearch }: IInputSearch) => {
+const InputSearch = ({ scope, onSearch, className }: IInputSearch) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const inputSearchRef = useRef<HTMLDivElement>(null);
   const [showSearchEngine, setShowSearchEngine] = useState(false);
@@ -106,24 +108,16 @@ const InputSearch = ({ scope, onSearch }: IInputSearch) => {
   });
 
   return (
-    <div className="relative w-full" ref={inputSearchRef}>
+    <div className={clsx(className, "relative w-full")} ref={inputSearchRef}>
       <Input
         type="text"
         value={search.label}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
-        className={"w-full pr-8 bg-muted"}
+        className={"w-full  bg-muted h-[40px]"}
         placeholder={"Search..."}
         ref={inputRef}
       />
-
-      <div className="absolute right-2 top-2.5">
-        <FaSearch
-          className="font-sm text-primary cursor-pointer"
-          onClick={() => onSearch(search)}
-        />
-      </div>
-
       {showSearchEngine && !isEmpty(data?.getSearchs) && (
         <ul className="animate-in fade-in-0 zoom-in-95 absolute top-10 z-10 w-full rounded-lg outline-none bg-muted p-2 shadow-lg border-b-2 border-primary">
           {loading ? (

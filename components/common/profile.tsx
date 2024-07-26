@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Skeleton } from "../ui/skeleton";
+import ModalProfile from "./modal-profile";
 
 function Profile() {
   const router = useRouter();
@@ -45,11 +46,24 @@ function Profile() {
       )}
       {id && (
         <DropdownMenu>
-          <DropdownMenuTrigger>{fullname}</DropdownMenuTrigger>
+          <DropdownMenuTrigger className="outline-none">
+            {fullname}
+          </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem className="min-w-40" onClick={() => {}}>Profile</DropdownMenuItem>
-            <DropdownMenuItem className="min-w-40" onClick={() => {}}>Settings</DropdownMenuItem>
-            <DropdownMenuItem className="min-w-40" onClick={handleLogout}>Logout</DropdownMenuItem>
+            <DropdownMenuItem
+              className="min-w-40"
+              onClick={() => {
+                router.push("/");
+              }}
+            >
+              Home
+            </DropdownMenuItem>
+            <DropdownMenuItem className="min-w-40" onClick={() => {}}>
+              Settings
+            </DropdownMenuItem>
+            <DropdownMenuItem className="min-w-40" onClick={handleLogout}>
+              Logout
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )}
