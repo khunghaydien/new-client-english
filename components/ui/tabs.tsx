@@ -80,7 +80,7 @@ const TabsList = React.forwardRef<HTMLDivElement, TabsListProps>(
     <div
       ref={ref}
       className={cn(
-        "inline-flex h-9 items-center justify-center rounded-lg bg-muted p-1 border-muted shadow-lg",
+        "inline-flex h-9 items-center justify-center rounded-lg bg-muted p-1 shadow-lg border-b-2 border-primary",
         className
       )}
     >

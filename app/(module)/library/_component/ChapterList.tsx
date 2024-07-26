@@ -1,6 +1,6 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { LuView } from "react-icons/lu";
 import { FaWpforms } from "react-icons/fa";
 import { formatDistance } from "date-fns";
@@ -18,13 +18,17 @@ import { DIFFICULTY_MAPPING } from "@/const/library";
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
-  PaginationLink,
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface IChapterCard {
   chapter: Chapter;
@@ -36,12 +40,14 @@ const ChapterCard = ({ chapter, onClick }: IChapterCard) => {
     chapter;
   return (
     <div
-      className={"cursor-pointer p-3 rounded-lg bg-muted hover:bg-primary/10"}
+      className={
+        "cursor-pointer p-3 rounded-lg hover:border-primary bg-muted border-b-2 border-muted"
+      }
       onClick={() => onClick(id)}
     >
       <div className="flex gap-3 flex-col">
         <div className="flex items-center gap-2 justify-between">
-          <span className="truncate font-bole">{name}</span>
+          <span className="truncate font-bold text-pretty text-lg">{name}</span>
           {status === "PUBLISHED" && (
             <Badge variant={"default"}>Published</Badge>
           )}
@@ -140,7 +146,7 @@ const ChapterList = () => {
     [chapterFilterDto, refetch]
   );
 
-  const { currentPage, pageSize, totalElements, totalPages } = useMemo(() => {
+  const pagination = useMemo(() => {
     return data?.getChapters?.metadata;
   }, [data]);
 
@@ -175,17 +181,43 @@ const ChapterList = () => {
         </div>
       </ScrollArea>
 
-      <div></div>
+      <Pagination className="flex justify-end pr-6 gap-6">
+        <PaginationContent>
+          <PaginationItem>Rows per page:</PaginationItem>
+          <PaginationItem>
+            <DropdownMenu>
+              <DropdownMenuTrigger>{10}</DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem onClick={() => {}}>5</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => {}}>10</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => {}}>15</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </PaginationItem>
+        </PaginationContent>
 
-      <Pagination className="flex justify-end pr-6">
+        <PaginationContent>
+          <PaginationItem>
+            {`${
+              (pagination?.currentPage - 1) * pagination?.pageSize + 1
+            } - ${Math.min(
+              pagination?.currentPage * pagination?.pageSize,
+              pagination?.totalElements
+            )} of ${pagination?.totalElements}`}
+          </PaginationItem>
+        </PaginationContent>
+
         <PaginationContent>
           <PaginationItem>
             <PaginationPrevious href="#" />
           </PaginationItem>
-
-          {Array.from({ length: totalPages }).map((_, index) => (
+          {Array.from({ length: pagination?.totalPages }).map((_, index) => (
             <PaginationItem>
-              <Button variant={currentPage === index + 1 ? "default" : "ghost"}>
+              <Button
+                variant={
+                  pagination?.currentPage === index + 1 ? "default" : "ghost"
+                }
+              >
                 {index + 1}
               </Button>
             </PaginationItem>

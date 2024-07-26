@@ -47,9 +47,9 @@ function Profile() {
         <DropdownMenu>
           <DropdownMenuTrigger>{fullname}</DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem onClick={() => {}}>Profile</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => {}}>Settings</DropdownMenuItem>
-            <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
+            <DropdownMenuItem className="min-w-40" onClick={() => {}}>Profile</DropdownMenuItem>
+            <DropdownMenuItem className="min-w-40" onClick={() => {}}>Settings</DropdownMenuItem>
+            <DropdownMenuItem className="min-w-40" onClick={handleLogout}>Logout</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )}
