@@ -1,48 +1,86 @@
 "use client";
-import ImageCropper from "@/components/common/upload-image";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import ConditionalRender from "@/components/common/conditional-render";
+import ModalUploadImage from "@/components/common/modal-upload-image";
+import { Skeleton } from "@/components/ui/skeleton";
+import { UPDATE_USER } from "@/graphql/mutation/user";
 import { useUserStore } from "@/stores/userStore";
-import React, { useRef, useState } from "react";
+import { useMutation } from "@apollo/client";
+import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
+import React, { useCallback, useEffect, useState } from "react";
 import { MdEdit } from "react-icons/md";
 
-function Home() {
-    const user = useUserStore((state) => state);
-    const avatarUrl = useRef(user.avatar ?? "");
-    const updateAvatar = (imgSrc: string) => {
-        avatarUrl.current = imgSrc;
-    };
+const AvatarUser = ({ avatar }: { avatar: string }) => {
+    return (
+        <div className="flex items-center gap-2">
+            <img
+                src={avatar}
+                alt="Avatar"
+                className="w-[150px] h-[150px] rounded-full"
+            />
+        </div>
+    );
+};
+
+
+function Profile({ params }: { params: Params }) {
+    const { id } = params
+    const { avatar } = useUserStore((state) => state);
+    const setUser = useUserStore((state) => state.setUser)
+    const [updateUser, { loading }] = useMutation(UPDATE_USER);
+    const [mounted, setMounted] = useState(false)
+    const [newAvatar, setNewAvatar] = useState("")
+
+    useEffect(() => {
+        setMounted(true)
+    }, [])
+
+    const updateAvatar = useCallback(async (imgSrc: string) => {
+        try {
+            if (imgSrc) {
+                const res = await updateUser({
+                    variables: {
+                        id,
+                        avatar: imgSrc.split(',')[1]
+                    }
+                });
+                if (res.data.updateUser) {
+                    setNewAvatar(imgSrc)
+                    setUser(res?.data?.updateUser);
+                }
+            }
+        } catch (error) {
+            console.error("Update failed:", error);
+        }
+    }, [id, updateUser]);
+
     const [open, setOpen] = useState(false);
+
     return (
         <div className="flex flex-col items-center pt-12">
             <div className="relative">
-                <img
-                    src={avatarUrl.current}
-                    alt="Avatar"
-                    className="w-[150px] h-[150px] rounded-full border-2 border-gray-400"
+                <ConditionalRender
+                    conditional={mounted}
+                    fallback={<Skeleton className="w-[150px] h-[150px] rounded-full" />}
+                >
+                    <AvatarUser avatar={newAvatar ? newAvatar : avatar ?? ""} />
+                </ConditionalRender>
+                <button
+                    className="absolute -bottom-3 left-0 right-0 m-auto w-fit p-[.35rem] rounded-full bg-gray-800 hover:bg-gray-700 border border-gray-600"
+                    title="Change photo"
+                    onClick={() => setOpen(true)}
+                >
+                    <MdEdit />
+                </button>
+                <ModalUploadImage
+                    open={open}
+                    setOpen={setOpen}
+                    onClose={() => setOpen(false)}
+                    onSubmit={updateAvatar}
+                    title="Select avatar"
                 />
-                <Dialog open={open} onOpenChange={setOpen}>
-                    <DialogTrigger>
-                        <button
-                            className="absolute -bottom-3 left-0 right-0 m-auto w-fit p-[.35rem] rounded-full bg-gray-800 hover:bg-gray-700 border border-gray-600"
-                            title="Change photo"
-                        >
-                            <MdEdit />
-                        </button>
-                    </DialogTrigger>
-                    <DialogContent className="min-w-[900px]">
-                        <DialogHeader>
-                            <DialogTitle>{'gggg'}</DialogTitle>
-                        </DialogHeader>
-                        <ImageCropper
-                            closeModal={() => setOpen(false)}
-                            updateAvatar={updateAvatar}
-                        />
-                    </DialogContent>
-                </Dialog>
             </div>
         </div>
     );
 }
 
-export default Home;
+export default Profile;

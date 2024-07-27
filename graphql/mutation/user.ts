@@ -6,3 +6,13 @@ mutation deleteUser($id: String!) {
     }
 }
 `;
+
+export const UPDATE_USER = gql`
+mutation updateUser($id: String!, $avatar: String! ) {
+    updateUser(id: $id, avatar: $avatar) {
+        id,
+        avatar,
+        fullname, 
+    }
+}
+`;

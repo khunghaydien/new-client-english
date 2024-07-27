@@ -4,11 +4,10 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import InputSearch, { ISearchOutput } from "@/components/ui/input-search";
+import InputSearch from "@/components/ui/input-search";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LOGOUT_USER } from "@/graphql/mutation/auth";
 import { useUserStore } from "@/stores/userStore";
@@ -20,6 +19,8 @@ const Logo = lazy(() => import("@/components/common/logo"));
 import { MdNotifications } from "react-icons/md";
 import { MdLogout } from "react-icons/md";
 import { IoMdSettings } from "react-icons/io";
+import { FaBattleNet } from "react-icons/fa";
+
 const Icon = ({ children }: { children: ReactNode }) => {
   return (
     <div className="w-[40px] h-[40px] rounded-full bg-muted hover:bg-muted/70 flex items-center justify-center">
@@ -89,6 +90,9 @@ function layout({ children }: { children: ReactNode }) {
           {mouted ? (
             <>
               <Icon>
+                <FaBattleNet className="w-[20px] h-[20px]" />
+              </Icon>
+              <Icon>
                 <MdNotifications className="w-[20px] h-[20px]" />
               </Icon>
               <ConditionalRender
@@ -130,7 +134,7 @@ function layout({ children }: { children: ReactNode }) {
             </>
           ) : (
             <>
-              {Array.from({ length: 2 }).map((_, index) => (
+              {Array.from({ length: 3 }).map((_, index) => (
                 <Skeleton
                   key={index}
                   className="w-[40px] h-[40px] rounded-full"
