@@ -6,7 +6,7 @@ const authValidate = () => {
     })
     const registerValidate = yup.object({
         email: yup.string().nullable().required('Email is required'),
-        fullname: yup.string().nullable().required("Fullname is required"),
+        name: yup.string().nullable().required("User name is required"),
         password: yup.string().nullable().min(8).required("Password is required"),
         confirmPassword: yup.string().nullable().oneOf([yup.ref('password'), null], 'Passwords must match').required('Confirm Password is required')
     })

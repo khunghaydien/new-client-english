@@ -2,9 +2,8 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { useEffect } from "react"
-import { MAX_ELLIPSIS } from "@/const/app"
-import { CATEGORIES, ECHAPTER, ECHAPTERSTATUS, EDIFFICULTY, EEXERCISE } from "@/const/library"
 import { PixelCrop } from "react-image-crop"
+import { MAX_ELLIPSIS } from "@/const"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -68,20 +67,20 @@ export const getFirstNSegments = (url: string, rank: number = 2): string => {
   return url;
 }
 
-export const categorize = (data: string[]) => {
-  return data.reduce((acc, item) => {
-    if (Object.values(ECHAPTER).includes(item)) {
-      acc.ECHAPTER.push(item);
-    } else if (Object.values(EDIFFICULTY).includes(item)) {
-      acc.EDIFFICULTY = item;
-    } else if (Object.values(ECHAPTERSTATUS).includes(item)) {
-      acc.ECHAPTERSTATUS = item;
-    } else if (Object.values(EEXERCISE).includes(item)) {
-      acc.EEXERCISE = item;
-    }
-    return acc;
-  }, CATEGORIES);
-}
+// export const categorize = (data: string[]) => {
+//   return data.reduce((acc, item) => {
+//     if (Object.values(ECHAPTER).includes(item)) {
+//       acc.ECHAPTER.push(item);
+//     } else if (Object.values(EDIFFICULTY).includes(item)) {
+//       acc.EDIFFICULTY = item;
+//     } else if (Object.values(ECHAPTERSTATUS).includes(item)) {
+//       acc.ECHAPTERSTATUS = item;
+//     } else if (Object.values(EEXERCISE).includes(item)) {
+//       acc.EEXERCISE = item;
+//     }
+//     return acc;
+//   }, CATEGORIES);
+// }
 
 export const setCanvasPreview = (
   image: HTMLImageElement,

@@ -1,7 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useMutation } from "@apollo/client";
 import { useFormik } from "formik";
 import Link from "next/link";
 import React, { useState } from "react";
@@ -11,46 +10,69 @@ import { RiLockPasswordLine } from "react-icons/ri";
 import { RxAvatar } from "react-icons/rx";
 import { scrollToFirstErrorMessage } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { REGISTER_USER } from "@/graphql/mutation/auth";
 import authValidate from "./formik";
+import { useDispatch } from 'react-redux'
+import { AppDispatch } from "@/stores";
+import { signOut, signUp } from "@/reducers";
 const initialValues = {
   email: "",
-  fullname: "",
+  name: "",
   password: "",
   confirmPassword: "",
 };
-type IRegister = typeof initialValues;
+
 function PageComponent() {
-  const [registerUser, { loading }] = useMutation(REGISTER_USER);
+  const dispatch = useDispatch<AppDispatch>()
   const router = useRouter();
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] =
     useState<boolean>(false);
   const { registerValidate } = authValidate();
   const formik = useFormik({
     initialValues,
     validationSchema: registerValidate,
-    onSubmit: (values) => {
+    onSubmit: () => {
       setTimeout(() => {
         scrollToFirstErrorMessage();
       });
-      handleSubmit(values);
+      handleSubmit();
     },
   });
 
-  const handleSubmit = async (values: IRegister) => {
+  const handleSubmit = async () => {
+    const { email, password, name } = values
     try {
-      await registerUser({
-        variables: {
-          email: values.email,
-          password: values.password,
-          fullname: values.fullname,
-        },
-      });
-      router.push("/sign-in");
-    } catch (error) {}
+      setLoading(true)
+      dispatch(signUp({ email, password, name }))
+        .unwrap()
+        .then(res => {
+        })
+        .catch(err => {
+        })
+        .finally(() => {
+          setLoading(false)
+        })
+
+    } catch (error) { }
   };
-  const { values, setFieldValue } = formik;
+  const handleSignOut = async () => {
+    try {
+      setLoading(true)
+      dispatch(signOut({ userId: "ss" }))
+        .unwrap()
+        .then(res => {
+        })
+        .catch(err => {
+        })
+        .finally(() => {
+          setLoading(false)
+        })
+
+    } catch (error) { }
+  };
+
+  const { values, setFieldValue, errors, touched } = formik;
 
   return (
     <>
@@ -64,21 +86,21 @@ function PageComponent() {
           placeholder="email"
           type="email"
           value={values.email}
-          error={formik.touched.email && formik.touched.email}
-          errorMessage={formik.errors.email}
+          error={touched.email && touched.email}
+          errorMessage={errors.email}
           onChange={(e) => setFieldValue("email", e.target.value)}
         />
         <Input
           autoComplete="off"
           required
-          label="Fullname"
+          label="User name"
           startIcon={<RxAvatar />}
-          placeholder="fullname"
-          type="fullname"
-          value={values.fullname}
-          error={formik.touched.fullname && formik.touched.fullname}
-          errorMessage={formik.errors.fullname}
-          onChange={(e) => setFieldValue("fullname", e.target.value)}
+          placeholder="name"
+          type="name"
+          value={values.name}
+          error={touched.name && touched.name}
+          errorMessage={errors.name}
+          onChange={(e) => setFieldValue("name", e.target.value)}
         />
         <Input
           autoComplete="off"
@@ -106,8 +128,8 @@ function PageComponent() {
           placeholder="password"
           type={showPassword ? "text" : "password"}
           value={values.password}
-          error={formik.touched.password && formik.touched.password}
-          errorMessage={formik.errors.password}
+          error={touched.password && touched.password}
+          errorMessage={errors.password}
           onChange={(e) => setFieldValue("password", e.target.value)}
         />
         <Input
@@ -137,15 +159,15 @@ function PageComponent() {
           type={showConfirmPassword ? "text" : "password"}
           value={values.confirmPassword}
           error={
-            formik.touched.confirmPassword && formik.touched.confirmPassword
+            touched.confirmPassword && touched.confirmPassword
           }
-          errorMessage={formik.errors.confirmPassword}
+          errorMessage={errors.confirmPassword}
           onChange={(e) => setFieldValue("confirmPassword", e.target.value)}
         />
         <Button
           size={"lg"}
-          loading={loading}
           type="submit"
+          loading={loading}
           className={
             "w-full text-[17px] font-semibold text-white py-3 rounded-sm"
           }
@@ -159,6 +181,7 @@ function PageComponent() {
           <span>Sign In</span>
         </Link>
       </div>
+      <Button onClick={handleSignOut}>Sign Out</Button>
     </>
   );
 }

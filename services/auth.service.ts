@@ -1,12 +1,18 @@
-import { LoginDto, LoginResponse, RegisterDto } from "@/types/auth"
-import { signInClient } from "./api.service"
+
+
+import { SignInDto, SignInResponse, SignOutDto, SignUpDto, SignUpResponse } from "@/interfaces"
+import ApiClientWithToken, { publicClient } from "./api.service"
 export default {
-    login(requestBody: LoginDto): Promise<LoginResponse> {
-        const url = '/sign-in'
-        return signInClient.post(url, { ...requestBody })
+    signIn(requestBody: SignInDto) {
+        const url = '/auth/sign-in'
+        return publicClient.post(url, { ...requestBody })
     },
-    register(requestBody: RegisterDto): Promise<LoginResponse> {
-        const url = '/sign-up'
-        return signInClient.post(url, { ...requestBody })
+    signUp(requestBody: SignUpDto) {
+        const url = '/auth/sign-up'
+        return publicClient.post(url, { ...requestBody })
+    },
+    signOut({ userId }: SignOutDto) {
+        const url = '/auth/sign-out'
+        return ApiClientWithToken.post(url, { userId })
     },
 }

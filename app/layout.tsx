@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import ApolloClientProvider from "@/provider/AppolloClientProvider";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/toaster";
+import ReduxProvider from "@/provider/redux-provider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -19,7 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <body className={inter.className}>
-        <ApolloClientProvider>
+        <ReduxProvider>
           <ThemeProvider
             attribute="class"
             defaultTheme="dark"
@@ -29,7 +29,7 @@ export default function RootLayout({
             {children}
             <Toaster />
           </ThemeProvider>
-        </ApolloClientProvider>
+        </ReduxProvider>
       </body>
     </html>
   );

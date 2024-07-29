@@ -1,89 +1,10 @@
+import { ACCESS_TOKEN, EMAIL, HEADER_DATA_FORM_FILE, HEADER_DEFAULT, REFRESH_TOKEN, TIMEOUT } from '@/const';
+import { HttpStatusCode } from '@/enum/api.enum';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-
-const BASE_URL = 'http://localhost:3030'
-const ENVIRONMENT = 'development'
-const ACCESS_TOKEN = 'accessToken'
-const REFRESH_TOKEN = 'refreshToken'
-const EMAIL = 'email'
-const TIMEOUT = 300000
-const HEADER_DEFAULT = {
-    Accept: 'application/json',
-    'Content-Type': 'application/json',
-}
-const HEADER_DATA_FORM_FILE = {
-    Accept: 'application/json',
-    'Content-Type': 'multipart/form-data',
-}
-
 export interface ApiResponse<T = any> {
     status: HttpStatusCode
     body: T
 }
-
-export enum HttpStatusCode {
-    CONTINUE = 100,
-    SWITCHING_PROTOCOLS = 101,
-    PROCESSING = 102,
-    OK = 200,
-    CREATED = 201,
-    ACCEPTED = 202,
-    NON_AUTHORITATIVE_INFORMATION = 203,
-    NO_CONTENT = 204,
-    RESET_CONTENT = 205,
-    PARTIAL_CONTENT = 206,
-    MULTI_STATUS = 207,
-    ALREADY_REPORTED = 208,
-    IM_USED = 226,
-    MULTIPLE_CHOICES = 300,
-    MOVED_PERMANENTLY = 301,
-    FOUND = 302,
-    SEE_OTHER = 303,
-    NOT_MODIFIED = 304,
-    USE_PROXY = 305,
-    SWITCH_PROXY = 306,
-    TEMPORARY_REDIRECT = 307,
-    PERMANENT_REDIRECT = 308,
-    BAD_REQUEST = 400,
-    UNAUTHORIZED = 401,
-    PAYMENT_REQUIRED = 402,
-    FORBIDDEN = 403,
-    NOT_FOUND = 404,
-    METHOD_NOT_ALLOWED = 405,
-    NOT_ACCEPTABLE = 406,
-    PROXY_AUTHENTICATION_REQUIRED = 407,
-    REQUEST_TIMEOUT = 408,
-    CONFLICT = 409,
-    GONE = 410,
-    LENGTH_REQUIRED = 411,
-    PRECONDITION_FAILED = 412,
-    PAYLOAD_TOO_LARGE = 413,
-    URI_TOO_LONG = 414,
-    UNSUPPORTED_MEDIA_TYPE = 415,
-    RANGE_NOT_SATISFIABLE = 416,
-    EXPECTATION_FAILED = 417,
-    I_AM_A_TEAPOT = 418,
-    MISDIRECTED_REQUEST = 421,
-    UNPROCESSABLE_ENTITY = 422,
-    LOCKED = 423,
-    FAILED_DEPENDENCY = 424,
-    UPGRADE_REQUIRED = 426,
-    PRECONDITION_REQUIRED = 428,
-    TOO_MANY_REQUESTS = 429,
-    REQUEST_HEADER_FIELDS_TOO_LARGE = 431,
-    UNAVAILABLE_FOR_LEGAL_REASONS = 451,
-    INTERNAL_SERVER_ERROR = 500,
-    NOT_IMPLEMENTED = 501,
-    BAD_GATEWAY = 502,
-    SERVICE_UNAVAILABLE = 503,
-    GATEWAY_TIMEOUT = 504,
-    HTTP_VERSION_NOT_SUPPORTED = 505,
-    VARIANT_ALSO_NEGOTIATES = 506,
-    INSUFFICIENT_STORAGE = 507,
-    LOOP_DETECTED = 508,
-    NOT_EXTENDED = 510,
-    NETWORK_AUTHENTICATION_REQUIRED = 511,
-}
-
 class HttpService {
     axios: any;
     getCredential: any;
@@ -118,16 +39,14 @@ class HttpService {
 }
 
 const defaultConfig = (headers: any) => ({
-    baseURL: BASE_URL,
+    baseURL: 'http://localhost:3030',
     headers: { ...headers },
     timeout: TIMEOUT,
 });
 
 const getCredentialWithAccessToken = (config: any = {}) => {
     let accessToken: string = '';
-    if (ENVIRONMENT === 'development') {
-        accessToken = localStorage.getItem(ACCESS_TOKEN) || '';
-    }
+    accessToken = localStorage.getItem(ACCESS_TOKEN) || '';
     if (!accessToken) return config;
     return {
         ...config,
@@ -154,11 +73,11 @@ const refreshAccessToken = async () => {
     if (!refreshToken) {
         throw new Error('No refresh token available');
     }
-    const response = await axios.post(`${BASE_URL}/auth/refresh`, { refreshToken });
-    const { accessToken, refreshToken: newRefreshToken } = response.data;
-    localStorage.setItem(ACCESS_TOKEN, accessToken);
-    localStorage.setItem(REFRESH_TOKEN, newRefreshToken);
-    return accessToken;
+    const response = await axios.post(`http://localhost:3030/auth/refresh`, { refreshToken });
+    const { access_token, refresh_token } = response.data;
+    localStorage.setItem(ACCESS_TOKEN, access_token);
+    localStorage.setItem(REFRESH_TOKEN, refresh_token);
+    return access_token;
 };
 
 const configInterceptors = (axiosClient: any) => {
@@ -189,7 +108,6 @@ const configInterceptors = (axiosClient: any) => {
                     const newAccessToken = await refreshAccessToken();
                     refreshTokenInProgress = false;
                     onRefreshed(newAccessToken);
-
                     config.headers.Authorization = `Bearer ${newAccessToken}`;
                     return axios(config);
                 } catch (refreshError) {
@@ -228,7 +146,7 @@ export const ApiClientFormFile = new HttpService(
     getCredentialWithAccessToken
 );
 
-const signInConfigInterceptors = (axiosClient: any) => {
+const publicClientConfigInterceptors = (axiosClient: any) => {
     axiosClient.interceptors.response.use(
         (res: AxiosResponse) => res.data,
         (res: any) => Promise.reject(res.response?.data)
@@ -236,7 +154,7 @@ const signInConfigInterceptors = (axiosClient: any) => {
     return axiosClient;
 };
 
-export const signInClient = signInConfigInterceptors(
+export const publicClient = publicClientConfigInterceptors(
     axios.create(defaultConfig(HEADER_DEFAULT))
 );
 

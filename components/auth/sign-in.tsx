@@ -3,17 +3,17 @@ import { Input } from "@/components/ui/input";
 import React, { useState } from "react";
 import { useFormik } from "formik";
 import { Button } from "@/components/ui/button";
-import { useMutation } from "@apollo/client";
 import { MdEmail } from "react-icons/md";
 import { RiLockPasswordLine } from "react-icons/ri";
 import Link from "next/link";
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
-import { LOGIN_USER } from "@/graphql/mutation/auth";
 import { scrollToFirstErrorMessage } from "@/lib/utils";
 import authValidate from "./formik";
-import { useUserStore } from "@/stores/userStore";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/stores";
+import { signIn } from "@/reducers";
 
 const initialValues = {
   email: "",
@@ -21,8 +21,9 @@ const initialValues = {
 };
 
 function PageComponent() {
+  const dispatch = useDispatch<AppDispatch>()
   const { loginValidate } = authValidate();
-  const setUser = useUserStore((state) => state.setUser);
+  const [loading, setLoading] = useState(false)
   const router = useRouter();
   const formik = useFormik({
     initialValues,
@@ -35,20 +36,20 @@ function PageComponent() {
     },
   });
 
-  const [loginUser, { loading }] = useMutation(LOGIN_USER, {
-    variables: {
-      email: formik.values.email,
-      password: formik.values.password,
-    },
-  });
-
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const handleLogin = async () => {
     try {
-      const res = await loginUser();
-      setUser(res.data.login.user);
-      router.push("/");
-    } catch (error) {}
+      setLoading(true)
+      dispatch(signIn(values))
+        .unwrap()
+        .then(res => {
+        })
+        .catch(err => {
+        })
+        .finally(() => {
+          setLoading(false)
+        })
+    } catch (error) { }
   };
   const { values, setFieldValue } = formik;
 
