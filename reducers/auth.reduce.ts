@@ -1,5 +1,6 @@
 
 
+'use client'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { RootState } from '../stores'
 import authService from '@/services/auth.service'
@@ -58,12 +59,26 @@ export const authSlice = createSlice({
                 const { access_token, refresh_token } = payload.data
                 localStorage.setItem(ACCESS_TOKEN, access_token);
                 localStorage.setItem(REFRESH_TOKEN, refresh_token);
+                window.location.href = '/';
             }),
             builder.addCase(signIn.rejected, state => {
             })
-        builder.addCase(signUp.fulfilled, (state, { payload }) => {
-            console.log(payload);
-        })
+        builder.addCase(signOut.pending, state => {
+        }),
+            builder.addCase(signOut.fulfilled, (state, { payload }) => {
+                localStorage.removeItem(ACCESS_TOKEN);
+                localStorage.removeItem(REFRESH_TOKEN);
+                window.location.href = '/sign-in';
+            }),
+            builder.addCase(signOut.rejected, state => {
+            })
+        builder.addCase(signUp.pending, state => {
+        }),
+            builder.addCase(signUp.fulfilled, (state, { payload }) => {
+                window.location.href = '/sign-in';
+            }),
+            builder.addCase(signUp.rejected, state => {
+            })
     },
 })
 

@@ -1,4 +1,4 @@
-import { ACCESS_TOKEN, EMAIL, HEADER_DATA_FORM_FILE, HEADER_DEFAULT, REFRESH_TOKEN, TIMEOUT } from '@/const';
+import { ACCESS_TOKEN, HEADER_DATA_FORM_FILE, HEADER_DEFAULT, REFRESH_TOKEN, TIMEOUT } from '@/const';
 import { HttpStatusCode } from '@/enum/api.enum';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 export interface ApiResponse<T = any> {
@@ -88,7 +88,7 @@ const configInterceptors = (axiosClient: any) => {
             if (status === HttpStatusCode.UNAUTHORIZED && !config._retry) {
                 if (!localStorage.getItem(REFRESH_TOKEN)) {
                     localStorage.removeItem(ACCESS_TOKEN);
-                    localStorage.removeItem(EMAIL);
+                    window.location.href = '/sign-in'
                     return Promise.reject(error);
                 }
 
@@ -115,7 +115,7 @@ const configInterceptors = (axiosClient: any) => {
                     refreshSubscribers = [];
                     localStorage.removeItem(ACCESS_TOKEN);
                     localStorage.removeItem(REFRESH_TOKEN);
-                    localStorage.removeItem(EMAIL);
+                    window.location.href = '/sign-in'
                     return Promise.reject(refreshError);
                 }
             }

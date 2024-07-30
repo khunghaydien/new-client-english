@@ -21,9 +21,9 @@ const initialValues = {
 };
 
 function PageComponent() {
-  const dispatch = useDispatch<AppDispatch>()
+  const dispatch = useDispatch<AppDispatch>();
   const { loginValidate } = authValidate();
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const formik = useFormik({
     initialValues,
@@ -39,17 +39,13 @@ function PageComponent() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const handleLogin = async () => {
     try {
-      setLoading(true)
+      setLoading(true);
       dispatch(signIn(values))
         .unwrap()
-        .then(res => {
-        })
-        .catch(err => {
-        })
         .finally(() => {
-          setLoading(false)
-        })
-    } catch (error) { }
+          setLoading(false);
+        });
+    } catch (error) {}
   };
   const { values, setFieldValue } = formik;
 

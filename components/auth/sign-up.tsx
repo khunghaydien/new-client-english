@@ -11,7 +11,7 @@ import { RxAvatar } from "react-icons/rx";
 import { scrollToFirstErrorMessage } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import authValidate from "./formik";
-import { useDispatch } from 'react-redux'
+import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/stores";
 import { signOut, signUp } from "@/reducers";
 const initialValues = {
@@ -22,10 +22,9 @@ const initialValues = {
 };
 
 function PageComponent() {
-  const dispatch = useDispatch<AppDispatch>()
-  const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] =
     useState<boolean>(false);
   const { registerValidate } = authValidate();
@@ -41,35 +40,25 @@ function PageComponent() {
   });
 
   const handleSubmit = async () => {
-    const { email, password, name } = values
+    const { email, password, name } = values;
     try {
-      setLoading(true)
+      setLoading(true);
       dispatch(signUp({ email, password, name }))
         .unwrap()
-        .then(res => {
-        })
-        .catch(err => {
-        })
         .finally(() => {
-          setLoading(false)
-        })
-
-    } catch (error) { }
+          setLoading(false);
+        });
+    } catch (error) {}
   };
   const handleSignOut = async () => {
     try {
-      setLoading(true)
+      setLoading(true);
       dispatch(signOut({ userId: "ss" }))
         .unwrap()
-        .then(res => {
-        })
-        .catch(err => {
-        })
         .finally(() => {
-          setLoading(false)
-        })
-
-    } catch (error) { }
+          setLoading(false);
+        });
+    } catch (error) {}
   };
 
   const { values, setFieldValue, errors, touched } = formik;
@@ -158,9 +147,7 @@ function PageComponent() {
           placeholder="confirmPassword"
           type={showConfirmPassword ? "text" : "password"}
           value={values.confirmPassword}
-          error={
-            touched.confirmPassword && touched.confirmPassword
-          }
+          error={touched.confirmPassword && touched.confirmPassword}
           errorMessage={errors.confirmPassword}
           onChange={(e) => setFieldValue("confirmPassword", e.target.value)}
         />
