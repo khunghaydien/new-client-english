@@ -5,9 +5,13 @@ import {
     Action,
 } from '@reduxjs/toolkit'
 import authReducer from '@/reducers/auth.reduce'
+import searchReducer from '@/reducers/search.reducer'
+import { libraryReducer } from '@/reducers/library'
 
 const rootReducer = combineReducers({
     auth: authReducer,
+    search: searchReducer,
+    library: libraryReducer
 })
 
 export const store = configureStore({

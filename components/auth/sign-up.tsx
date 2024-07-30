@@ -9,11 +9,14 @@ import { MdEmail } from "react-icons/md";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { RxAvatar } from "react-icons/rx";
 import { scrollToFirstErrorMessage } from "@/lib/utils";
-import { useRouter } from "next/navigation";
 import authValidate from "./formik";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/stores";
-import { signOut, signUp } from "@/reducers";
+import { signUp } from "@/reducers/auth.reduce";
+import { ChapterState } from "@/interfaces/library.interface";
+import { selectChapter } from "@/reducers/library/chapter.reducer";
+import { HttpStatusCode } from "@/enum";
+import { useRouter } from "next/navigation";
 const initialValues = {
   email: "",
   name: "",
@@ -28,6 +31,7 @@ function PageComponent() {
   const [showConfirmPassword, setShowConfirmPassword] =
     useState<boolean>(false);
   const { registerValidate } = authValidate();
+  const router = useRouter();
   const formik = useFormik({
     initialValues,
     validationSchema: registerValidate,
@@ -45,24 +49,17 @@ function PageComponent() {
       setLoading(true);
       dispatch(signUp({ email, password, name }))
         .unwrap()
+        .then((res) => {
+          if (res.statusCode === HttpStatusCode.CREATED) {
+            router.push("/sign-in");
+          }
+        })
         .finally(() => {
           setLoading(false);
         });
     } catch (error) {}
   };
-  const handleSignOut = async () => {
-    try {
-      setLoading(true);
-      dispatch(signOut({ userId: "ss" }))
-        .unwrap()
-        .finally(() => {
-          setLoading(false);
-        });
-    } catch (error) {}
-  };
-
   const { values, setFieldValue, errors, touched } = formik;
-
   return (
     <>
       <div className="text-center text-[28px] mb-4 font-bold">Sign up</div>
@@ -168,7 +165,6 @@ function PageComponent() {
           <span>Sign In</span>
         </Link>
       </div>
-      <Button onClick={handleSignOut}>Sign Out</Button>
     </>
   );
 }

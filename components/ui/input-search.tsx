@@ -1,16 +1,16 @@
 import { useCallback, useRef, useState } from "react";
 import { Input } from "./input";
-import { useQuery } from "@apollo/client";
-import { GET_SEARCHS } from "@/graphql/query/search";
-import { Search as ISearch } from "@/gql/graphql";
 import { isEmpty } from "lodash";
 import { ImSpinner2 } from "react-icons/im";
-import { FaSearch } from "react-icons/fa";
 import { useClickOutside } from "@/lib/utils";
 import { debounce } from "lodash";
-import { INPUT_TIME_DELAY } from "@/const/app";
 import { FaBan } from "react-icons/fa";
 import clsx from "clsx";
+import { ISearch } from "@/interfaces";
+import { INPUT_TIME_DELAY } from "@/const";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch } from "@/stores";
+import { getSearch, selectSearch } from "@/reducers/search.reducer";
 
 export interface ISearchOutput {
   value?: ISearch | null;
@@ -27,19 +27,26 @@ const InputSearch = ({ scope, onSearch, className }: IInputSearch) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const inputSearchRef = useRef<HTMLDivElement>(null);
   const [showSearchEngine, setShowSearchEngine] = useState(false);
+  const { data } = useSelector(selectSearch);
   const [activeIndex, setActiveIndex] = useState<number>(-1);
   const [search, setSearch] = useState<ISearchOutput>({});
-  const { data, loading, refetch } = useQuery(GET_SEARCHS);
-  const debounceInput = useCallback(
-    debounce((value: string) => {
-      setActiveIndex(-1);
-      setShowSearchEngine(true);
-      refetch({
-        searchFilterDto: { name: value, ...(scope && { scope }) },
-      });
-    }, INPUT_TIME_DELAY),
-    []
-  );
+  const [loading, setLoading] = useState<boolean>(false);
+  const dispatch = useDispatch<AppDispatch>();
+  const handleSearch = async () => {
+    try {
+      setLoading(true);
+      dispatch(getSearch())
+        .unwrap()
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {}
+  };
+  const debounceInput = debounce((value: string) => {
+    setActiveIndex(-1);
+    setShowSearchEngine(true);
+    handleSearch();
+  }, INPUT_TIME_DELAY);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch({ value: null, label: event.target.value });
@@ -81,7 +88,7 @@ const InputSearch = ({ scope, onSearch, className }: IInputSearch) => {
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "ArrowDown") {
       setActiveIndex((prevIndex) =>
-        prevIndex < data?.getSearchs?.length - 1 ? prevIndex + 1 : prevIndex
+        prevIndex < data?.length - 1 ? prevIndex + 1 : prevIndex
       );
     } else if (event.key === "ArrowUp") {
       setActiveIndex((prevIndex) =>
@@ -89,8 +96,8 @@ const InputSearch = ({ scope, onSearch, className }: IInputSearch) => {
       );
     } else if (event.key === "Enter") {
       if (showSearchEngine) {
-        if (activeIndex >= 0 && activeIndex < data?.getSearchs?.length) {
-          handleClickSearchEngine(data?.getSearchs?.[activeIndex]);
+        if (activeIndex >= 0 && activeIndex < data?.length) {
+          handleClickSearchEngine(data?.[activeIndex]);
         } else {
           setShowSearchEngine(false);
           onSearch(search);
@@ -118,7 +125,7 @@ const InputSearch = ({ scope, onSearch, className }: IInputSearch) => {
         placeholder={"Search..."}
         ref={inputRef}
       />
-      {showSearchEngine && !isEmpty(data?.getSearchs) && (
+      {showSearchEngine && !isEmpty(data) && (
         <ul className="animate-in fade-in-0 zoom-in-95 absolute top-10 z-10 w-full rounded-lg outline-none bg-muted p-2 shadow-lg border-b-2 border-primary">
           {loading ? (
             <div className="flex items-center justify-center">
@@ -126,7 +133,7 @@ const InputSearch = ({ scope, onSearch, className }: IInputSearch) => {
             </div>
           ) : (
             <div className="flex flex-col gap-1">
-              {data?.getSearchs.map((search: ISearch, index: number) => (
+              {data.map((search: ISearch, index: number) => (
                 <li
                   key={search.id}
                   onClick={() => handleClickSearchEngine(search)}

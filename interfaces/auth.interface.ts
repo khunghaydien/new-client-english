@@ -22,12 +22,8 @@ export interface User {
     id: string
     name: string
     email: string
-    password: string
-    image?: string
 }
 
 export interface AuthState {
-    user: User | null
-    signInLoading: boolean
-    signUpLoading: boolean
+    user: User
 }

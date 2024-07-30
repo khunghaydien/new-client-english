@@ -1,6 +1,6 @@
 
 
-import { SignInDto, SignInResponse, SignOutDto, SignUpDto, SignUpResponse } from "@/interfaces"
+import { SignInDto, SignUpDto, } from "@/interfaces"
 import ApiClientWithToken, { publicClient } from "./api.service"
 export default {
     signIn(requestBody: SignInDto) {
@@ -11,8 +11,8 @@ export default {
         const url = '/auth/sign-up'
         return publicClient.post(url, { ...requestBody })
     },
-    signOut({ userId }: SignOutDto) {
+    signOut(id: string) {
         const url = '/auth/sign-out'
-        return ApiClientWithToken.post(url, { userId })
+        return ApiClientWithToken.post(url, id)
     },
 }

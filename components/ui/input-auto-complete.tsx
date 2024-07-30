@@ -38,13 +38,10 @@ const InputAutoComplete = ({
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const debounceInput = useCallback(
-    _.debounce((value: string) => {
-      onChange(value);
-      setWriting(false);
-    }, 1000),
-    []
-  );
+  const debounceInput = _.debounce((value: string) => {
+    onChange(value);
+    setWriting(false);
+  }, 1000);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;

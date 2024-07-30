@@ -13,7 +13,8 @@ import { scrollToFirstErrorMessage } from "@/lib/utils";
 import authValidate from "./formik";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/stores";
-import { signIn } from "@/reducers";
+import { signIn } from "@/reducers/auth.reduce";
+import { HttpStatusCode } from "@/enum";
 
 const initialValues = {
   email: "",
@@ -42,6 +43,11 @@ function PageComponent() {
       setLoading(true);
       dispatch(signIn(values))
         .unwrap()
+        .then((res) => {
+          if (res.statusCode === HttpStatusCode.OK) {
+            router.push("/");
+          }
+        })
         .finally(() => {
           setLoading(false);
         });

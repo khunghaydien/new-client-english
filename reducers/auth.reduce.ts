@@ -1,18 +1,17 @@
 
-
-'use client'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { RootState } from '../stores'
 import authService from '@/services/auth.service'
-import { AuthState, SignInDto, SignOutDto, SignUpDto } from '@/interfaces'
+import { AuthState, SignInDto, SignUpDto } from '@/interfaces'
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/const'
 
 const initialState: AuthState = {
-    user: null,
-    signInLoading: false,
-    signUpLoading: false
+    user: {
+        id: '',
+        name: '',
+        email: ''
+    }
 }
-
 export const signIn = createAsyncThunk(
     'auth/sign-in',
     async (requestBody: SignInDto, { rejectWithValue, dispatch }) => {
@@ -38,9 +37,9 @@ export const signUp = createAsyncThunk(
 
 export const signOut = createAsyncThunk(
     'auth/sign-out',
-    async (requestBody: SignOutDto, { rejectWithValue, dispatch }) => {
+    async (id: string, { rejectWithValue, dispatch }) => {
         try {
-            const res = await authService.signOut(requestBody)
+            const res = await authService.signOut(id)
             return res
         } catch (err: any) {
             return rejectWithValue(err)
@@ -56,10 +55,15 @@ export const authSlice = createSlice({
         builder.addCase(signIn.pending, state => {
         }),
             builder.addCase(signIn.fulfilled, (state, { payload }) => {
-                const { access_token, refresh_token } = payload.data
-                localStorage.setItem(ACCESS_TOKEN, access_token);
-                localStorage.setItem(REFRESH_TOKEN, refresh_token);
-                window.location.href = '/';
+                const { user, tokens } = payload.data
+                const { id, name, email } = user
+                localStorage.setItem(ACCESS_TOKEN, tokens.access_token);
+                localStorage.setItem(REFRESH_TOKEN, tokens.refresh_token);
+                state.user = {
+                    id,
+                    name,
+                    email
+                }
             }),
             builder.addCase(signIn.rejected, state => {
             })
@@ -68,14 +72,17 @@ export const authSlice = createSlice({
             builder.addCase(signOut.fulfilled, (state, { payload }) => {
                 localStorage.removeItem(ACCESS_TOKEN);
                 localStorage.removeItem(REFRESH_TOKEN);
-                window.location.href = '/sign-in';
+                state.user = {
+                    id: '',
+                    name: '',
+                    email: ''
+                }
             }),
             builder.addCase(signOut.rejected, state => {
             })
         builder.addCase(signUp.pending, state => {
         }),
             builder.addCase(signUp.fulfilled, (state, { payload }) => {
-                window.location.href = '/sign-in';
             }),
             builder.addCase(signUp.rejected, state => {
             })
