@@ -6,9 +6,8 @@ import { UPDATE_USER } from "@/graphql/mutation/user";
 import { useUserStore } from "@/stores/userStore";
 import { useMutation } from "@apollo/client";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { MdEdit } from "react-icons/md";
-import axios from "axios";
 
 const AvatarUser = ({ avatar }: { avatar: string }) => {
   return (
@@ -34,69 +33,27 @@ function Profile({ params }: { params: Params }) {
     setMounted(true);
   }, []);
 
-  // const updateAvatar = useCallback(async (imgSrc: string) => {
-  //     try {
-  //         if (imgSrc) {
-  //             const res = await updateUser({
-  //                 variables: {
-  //                     id,
-  //                     avatar: imgSrc.split(',')[1]
-  //                 }
-  //             });
-  //             if (res.data.updateUser) {
-  //                 setNewAvatar(imgSrc)
-  //                 setUser(res?.data?.updateUser);
-  //             }
-  //         }
-  //     } catch (error) {
-  //         console.error("Update failed:", error);
-  //     }
-  // }, [id, updateUser]);
-  const base64ToBlob = (base64: string, contentType: string): Blob => {
-    const byteCharacters = atob(base64.split(",")[1]); // Decode base64
-    const byteArrays = [];
-
-    for (let offset = 0; offset < byteCharacters.length; offset += 512) {
-      const slice = byteCharacters.slice(offset, offset + 512);
-
-      const byteNumbers = new Array(slice.length);
-      for (let i = 0; i < slice.length; i++) {
-        byteNumbers[i] = slice.charCodeAt(i);
-      }
-
-      const byteArray = new Uint8Array(byteNumbers);
-      byteArrays.push(byteArray);
-    }
-
-    return new Blob(byteArrays, { type: contentType });
-  };
-  const updateAvatar = async (imgSrc: string) => {
-    const blob = base64ToBlob(imgSrc, "image/jpeg");
-
-    // Create a File object from the Blob
-    const file = new File([blob], "profile.jpg", { type: "image/jpeg" });
-
-    // Create FormData and append the file
-    const formData = new FormData();
-    formData.append("file", file);
-
-    try {
-      const response = await axios.post(
-        "http://localhost:3030/upload/file",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          withCredentials: true,
+  const updateAvatar = useCallback(
+    async (imgSrc: string) => {
+      try {
+        if (imgSrc) {
+          const res = await updateUser({
+            variables: {
+              id,
+              avatar: imgSrc.split(",")[1],
+            },
+          });
+          if (res.data.updateUser) {
+            setNewAvatar(imgSrc);
+            setUser(res?.data?.updateUser);
+          }
         }
-      );
-      console.log("File uploaded successfully:", response.data);
-    } catch (error) {
-      console.error("Error uploading file:", error);
-    }
-  };
-
+      } catch (error) {
+        console.error("Update failed:", error);
+      }
+    },
+    [id, updateUser]
+  );
   const [open, setOpen] = useState(false);
 
   return (

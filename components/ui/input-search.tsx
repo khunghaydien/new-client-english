@@ -5,7 +5,6 @@ import { GET_SEARCHS } from "@/graphql/query/search";
 import { Search as ISearch } from "@/gql/graphql";
 import { isEmpty } from "lodash";
 import { ImSpinner2 } from "react-icons/im";
-import { FaSearch } from "react-icons/fa";
 import { useClickOutside } from "@/lib/utils";
 import { debounce } from "lodash";
 import { INPUT_TIME_DELAY } from "@/const/app";
@@ -18,12 +17,12 @@ export interface ISearchOutput {
 }
 
 interface IInputSearch {
-  scope?: String[];
+  type?: String[];
   onSearch: (search: ISearchOutput) => void;
   className?: string;
 }
 
-const InputSearch = ({ scope, onSearch, className }: IInputSearch) => {
+const InputSearch = ({ type, onSearch, className }: IInputSearch) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const inputSearchRef = useRef<HTMLDivElement>(null);
   const [showSearchEngine, setShowSearchEngine] = useState(false);
@@ -35,7 +34,7 @@ const InputSearch = ({ scope, onSearch, className }: IInputSearch) => {
       setActiveIndex(-1);
       setShowSearchEngine(true);
       refetch({
-        searchFilterDto: { name: value, ...(scope && { scope }) },
+        searchFilterDto: { name: value, ...(type && { type }) },
       });
     }, INPUT_TIME_DELAY),
     []
@@ -46,15 +45,15 @@ const InputSearch = ({ scope, onSearch, className }: IInputSearch) => {
     debounceInput(event.target.value);
   };
 
-  const formatLabel = (name: string, scope: string[], description: string) => {
+  const formatLabel = (name: string, type: string[], description: string) => {
     return (
       <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center gap-4">
             {name}
-            {!isEmpty(scope) && (
+            {!isEmpty(type) && (
               <div className="flex items-center justify-center gap-2">
-                {scope.map((item: string, index) => (
+                {type.map((item: string, index) => (
                   <div
                     key={index}
                     className="px-2 bg-primary/20 rounded-lg hover:bg-primary/30"
@@ -67,7 +66,7 @@ const InputSearch = ({ scope, onSearch, className }: IInputSearch) => {
           </div>
           {description && <div className="text-xs">{description}</div>}
         </div>
-        {isEmpty(scope) && <FaBan className="text-destructive" />}
+        {isEmpty(type) && <FaBan className="text-destructive" />}
       </div>
     );
   };
@@ -136,7 +135,7 @@ const InputSearch = ({ scope, onSearch, className }: IInputSearch) => {
                 >
                   {formatLabel(
                     search.name,
-                    search.scope ?? [],
+                    search.type ?? [],
                     search.description ?? ""
                   )}
                 </li>

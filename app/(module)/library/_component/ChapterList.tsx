@@ -126,9 +126,9 @@ const ChapterList = () => {
     (search: ISearchOutput) => {
       const updatedFilterDto: any = { ...chapterFilterDto };
       if (search.value) {
-        if (!isEmpty(search.value.scope)) {
+        if (!isEmpty(search.value.type)) {
           updatedFilterDto.difficulty = categorize(
-            search.value.scope ?? []
+            search.value.type ?? []
           ).EDIFFICULTY;
           updatedFilterDto.name = search.label;
         } else {
@@ -155,7 +155,7 @@ const ChapterList = () => {
       <div className="flex gap-6 items-start w-full">
         <div className="max-w-[600px] w-full">
           <InputSearch
-            scope={type ? [type.toUpperCase()] : undefined}
+            type={type ? [type.toUpperCase()] : undefined}
             onSearch={handleSearch}
           />
         </div>
