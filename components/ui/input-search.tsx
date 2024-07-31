@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Input } from "./input";
 import { useQuery } from "@apollo/client";
 import { GET_SEARCHS } from "@/graphql/query/search";
@@ -28,17 +28,16 @@ const InputSearch = ({ type, onSearch, className }: IInputSearch) => {
   const [showSearchEngine, setShowSearchEngine] = useState(false);
   const [activeIndex, setActiveIndex] = useState<number>(-1);
   const [search, setSearch] = useState<ISearchOutput>({});
-  const { data, loading, refetch } = useQuery(GET_SEARCHS);
-  const debounceInput = useCallback(
-    debounce((value: string) => {
-      setActiveIndex(-1);
-      setShowSearchEngine(true);
-      refetch({
-        searchFilterDto: { name: value, ...(type && { type }) },
-      });
-    }, INPUT_TIME_DELAY),
-    []
-  );
+  const { data, loading, refetch } = useQuery(GET_SEARCHS, {
+    skip: !search.label,
+  });
+  const debounceInput = debounce((value: string) => {
+    setActiveIndex(-1);
+    setShowSearchEngine(true);
+    refetch({
+      searchFilterDto: { name: value, ...(type && { type }) },
+    });
+  }, INPUT_TIME_DELAY);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch({ value: null, label: event.target.value });
@@ -118,7 +117,7 @@ const InputSearch = ({ type, onSearch, className }: IInputSearch) => {
         ref={inputRef}
       />
       {showSearchEngine && !isEmpty(data?.getSearchs) && (
-        <ul className="animate-in fade-in-0 zoom-in-95 absolute top-10 z-10 w-full rounded-lg outline-none bg-muted p-2 shadow-lg border-b-2 border-primary">
+        <ul className="min-w-[500px] animate-in fade-in-0 zoom-in-95 absolute top-11 z-10 w-full rounded-lg outline-none bg-muted p-2 shadow-lg border-b-2 border-primary">
           {loading ? (
             <div className="flex items-center justify-center">
               <ImSpinner2 className="animate-spin w-8 h-8 text-primary" />

@@ -180,54 +180,55 @@ const ChapterList = () => {
           )}
         </div>
       </ScrollArea>
-
-      <Pagination className="flex justify-end pr-6 gap-6">
-        <PaginationContent>
-          <PaginationItem>Rows per page:</PaginationItem>
-          <PaginationItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger>{10}</DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem onClick={() => {}}>5</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => {}}>10</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => {}}>15</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </PaginationItem>
-        </PaginationContent>
-
-        <PaginationContent>
-          <PaginationItem>
-            {`${
-              (pagination?.currentPage - 1) * pagination?.pageSize + 1
-            } - ${Math.min(
-              pagination?.currentPage * pagination?.pageSize,
-              pagination?.totalElements
-            )} of ${pagination?.totalElements}`}
-          </PaginationItem>
-        </PaginationContent>
-
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious href="#" />
-          </PaginationItem>
-          {Array.from({ length: pagination?.totalPages }).map((_, index) => (
+      {!isEmpty(data?.getChapters?.chapters) && (
+        <Pagination className="flex justify-end pr-6 gap-6">
+          <PaginationContent>
+            <PaginationItem>Rows per page:</PaginationItem>
             <PaginationItem>
-              <Button
-                variant={
-                  pagination?.currentPage === index + 1 ? "default" : "ghost"
-                }
-              >
-                {index + 1}
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger>{10}</DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onClick={() => {}}>5</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => {}}>10</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => {}}>15</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </PaginationItem>
-          ))}
+          </PaginationContent>
 
-          <PaginationItem>
-            <PaginationNext href="#" />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              {`${
+                (pagination?.currentPage - 1) * pagination?.pageSize + 1
+              } - ${Math.min(
+                pagination?.currentPage * pagination?.pageSize,
+                pagination?.totalElements
+              )} of ${pagination?.totalElements}`}
+            </PaginationItem>
+          </PaginationContent>
+
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious href="#" />
+            </PaginationItem>
+            {Array.from({ length: pagination?.totalPages }).map((_, index) => (
+              <PaginationItem>
+                <Button
+                  variant={
+                    pagination?.currentPage === index + 1 ? "default" : "ghost"
+                  }
+                >
+                  {index + 1}
+                </Button>
+              </PaginationItem>
+            ))}
+
+            <PaginationItem>
+              <PaginationNext href="#" />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      )}
     </div>
   );
 };

@@ -60,7 +60,7 @@ const AvatarUser = ({ avatar }: { avatar: string }) => {
 function layout({ children }: { children: ReactNode }) {
   const [mouted, setMounted] = useState(false);
   const [logoutUser] = useMutation(LOGOUT_USER);
-  const { id, avatar, fullname, logout } = useUserStore((state) => state);
+  const { id, avatar, name, logout } = useUserStore((state) => state);
   const router = useRouter();
   useEffect(() => {
     setMounted(true);
@@ -71,14 +71,14 @@ function layout({ children }: { children: ReactNode }) {
       logout();
       await logoutUser();
       router.push("/sign-in");
-    } catch (error) { }
+    } catch (error) {}
   };
 
-  const handleSearch = () => { };
-  const handleSetting = () => { };
+  const handleSearch = () => {};
+  const handleSetting = () => {};
   const handleAccount = () => {
     router.push(`/profile/${id}`);
-  }
+  };
   return (
     <div className="">
       <nav className="w-full flex items-center justify-between px-12 py-3 text-sm border-b-[0.5px] border-muted-foreground bg-muted/30">
@@ -107,7 +107,7 @@ function layout({ children }: { children: ReactNode }) {
                     <DropdownMenuItem onClick={handleAccount}>
                       <div className="flex items-center gap-2">
                         <AvatarUser avatar={avatar ?? ""} />
-                        <div>{fullname}</div>
+                        <div>{name}</div>
                       </div>
                     </DropdownMenuItem>
                     <DropdownMenuItem

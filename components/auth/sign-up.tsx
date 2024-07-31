@@ -15,7 +15,7 @@ import { REGISTER_USER } from "@/graphql/mutation/auth";
 import authValidate from "./formik";
 const initialValues = {
   email: "",
-  fullname: "",
+  name: "",
   password: "",
   confirmPassword: "",
 };
@@ -44,7 +44,7 @@ function PageComponent() {
         variables: {
           email: values.email,
           password: values.password,
-          fullname: values.fullname,
+          name: values.name,
         },
       });
       router.push("/sign-in");
@@ -71,14 +71,14 @@ function PageComponent() {
         <Input
           autoComplete="off"
           required
-          label="Fullname"
+          label="name"
           startIcon={<RxAvatar />}
-          placeholder="fullname"
-          type="fullname"
-          value={values.fullname}
-          error={formik.touched.fullname && formik.touched.fullname}
-          errorMessage={formik.errors.fullname}
-          onChange={(e) => setFieldValue("fullname", e.target.value)}
+          placeholder="name"
+          type="name"
+          value={values.name}
+          error={formik.touched.name && formik.touched.name}
+          errorMessage={formik.errors.name}
+          onChange={(e) => setFieldValue("name", e.target.value)}
         />
         <Input
           autoComplete="off"

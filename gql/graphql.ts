@@ -125,15 +125,15 @@ export type Explanation = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type Login = {
+  __typename?: 'Login';
+  error?: Maybe<ErrorType>;
+  user?: Maybe<User>;
+};
+
 export type LoginDto = {
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
-};
-
-export type LoginResponse = {
-  __typename?: 'LoginResponse';
-  error?: Maybe<ErrorType>;
-  user: User;
 };
 
 export type Mutation = {
@@ -144,10 +144,11 @@ export type Mutation = {
   deleteChapter?: Maybe<Chapter>;
   deleteSearch?: Maybe<Search>;
   deleteUser: User;
-  login: LoginResponse;
+  login: Login;
   logout: Scalars['String']['output'];
+  logoutAllDevices: Scalars['String']['output'];
   refreshToken: Scalars['String']['output'];
-  register: RegisterResponse;
+  register: Register;
   updateChapter?: Maybe<Chapter>;
   updateUser: User;
 };
@@ -267,16 +268,16 @@ export type Question = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
-export type RegisterDto = {
-  email: Scalars['String']['input'];
-  fullname: Scalars['String']['input'];
-  password: Scalars['String']['input'];
-};
-
-export type RegisterResponse = {
-  __typename?: 'RegisterResponse';
+export type Register = {
+  __typename?: 'Register';
   error?: Maybe<ErrorType>;
   user?: Maybe<User>;
+};
+
+export type RegisterDto = {
+  email: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  password: Scalars['String']['input'];
 };
 
 export type Search = {
@@ -298,40 +299,45 @@ export type User = {
   bio?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
   email: Scalars['String']['output'];
-  fullname: Scalars['String']['output'];
   id: Scalars['String']['output'];
+  name: Scalars['String']['output'];
   password: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
 
-export type LoginUserMutationVariables = Exact<{
+export type LoginMutationVariables = Exact<{
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
 }>;
 
 
-export type LoginUserMutation = { __typename?: 'Mutation', login: { __typename?: 'LoginResponse', user: { __typename?: 'User', email: string, id: string, fullname: string, avatar?: string | null } } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'Login', user?: { __typename?: 'User', email: string, id: string, name: string, avatar?: string | null } | null } };
 
-export type LogoutUserMutationVariables = Exact<{ [key: string]: never; }>;
+export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type LogoutUserMutation = { __typename?: 'Mutation', logout: string };
+export type LogoutMutation = { __typename?: 'Mutation', logout: string };
 
-export type RegisterUserMutationVariables = Exact<{
-  fullname: Scalars['String']['input'];
+export type LogoutAllDevicesMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LogoutAllDevicesMutation = { __typename?: 'Mutation', logoutAllDevices: string };
+
+export type RegisterMutationVariables = Exact<{
+  name: Scalars['String']['input'];
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
 }>;
 
 
-export type RegisterUserMutation = { __typename?: 'Mutation', register: { __typename?: 'RegisterResponse', user?: { __typename?: 'User', id: string, fullname: string, email: string } | null } };
+export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'Register', user?: { __typename?: 'User', id: string, name: string, email: string } | null } };
 
 export type DeleteUserMutationVariables = Exact<{
   id: Scalars['String']['input'];
 }>;
 
 
-export type DeleteUserMutation = { __typename?: 'Mutation', deleteUser: { __typename?: 'User', fullname: string } };
+export type DeleteUserMutation = { __typename?: 'Mutation', deleteUser: { __typename?: 'User', name: string } };
 
 export type UpdateUserMutationVariables = Exact<{
   id: Scalars['String']['input'];
@@ -339,7 +345,7 @@ export type UpdateUserMutationVariables = Exact<{
 }>;
 
 
-export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'User', id: string, avatar?: string | null, fullname: string } };
+export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'User', id: string, avatar?: string | null, name: string } };
 
 export type GetChaptersQueryVariables = Exact<{
   chapterFilterDto?: InputMaybe<ChapterFilterDto>;
@@ -373,11 +379,12 @@ export type GetSearchsQueryVariables = Exact<{
 export type GetSearchsQuery = { __typename?: 'Query', getSearchs?: Array<{ __typename?: 'Search', id: string, name: string, type?: Array<string> | null, description?: string | null }> | null };
 
 
-export const LoginUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"LoginUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"password"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"loginInput"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"password"},"value":{"kind":"Variable","name":{"kind":"Name","value":"password"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fullname"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}}]}}]}}]} as unknown as DocumentNode<LoginUserMutation, LoginUserMutationVariables>;
-export const LogoutUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"LogoutUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"logout"}}]}}]} as unknown as DocumentNode<LogoutUserMutation, LogoutUserMutationVariables>;
-export const RegisterUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RegisterUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"fullname"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"password"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"register"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"registerInput"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"fullname"},"value":{"kind":"Variable","name":{"kind":"Name","value":"fullname"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"password"},"value":{"kind":"Variable","name":{"kind":"Name","value":"password"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fullname"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]}}]} as unknown as DocumentNode<RegisterUserMutation, RegisterUserMutationVariables>;
-export const DeleteUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"deleteUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fullname"}}]}}]}}]} as unknown as DocumentNode<DeleteUserMutation, DeleteUserMutationVariables>;
-export const UpdateUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"avatar"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"avatar"},"value":{"kind":"Variable","name":{"kind":"Name","value":"avatar"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}},{"kind":"Field","name":{"kind":"Name","value":"fullname"}}]}}]}}]} as unknown as DocumentNode<UpdateUserMutation, UpdateUserMutationVariables>;
+export const LoginDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"Login"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"password"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"loginInput"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"password"},"value":{"kind":"Variable","name":{"kind":"Name","value":"password"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}}]}}]}}]} as unknown as DocumentNode<LoginMutation, LoginMutationVariables>;
+export const LogoutDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"Logout"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"logout"}}]}}]} as unknown as DocumentNode<LogoutMutation, LogoutMutationVariables>;
+export const LogoutAllDevicesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"LogoutAllDevices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"logoutAllDevices"}}]}}]} as unknown as DocumentNode<LogoutAllDevicesMutation, LogoutAllDevicesMutationVariables>;
+export const RegisterDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"Register"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"password"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"register"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"registerInput"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"name"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"password"},"value":{"kind":"Variable","name":{"kind":"Name","value":"password"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]}}]} as unknown as DocumentNode<RegisterMutation, RegisterMutationVariables>;
+export const DeleteUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"deleteUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<DeleteUserMutation, DeleteUserMutationVariables>;
+export const UpdateUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"avatar"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"avatar"},"value":{"kind":"Variable","name":{"kind":"Name","value":"avatar"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<UpdateUserMutation, UpdateUserMutationVariables>;
 export const GetChaptersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetChapters"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"chapterFilterDto"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"ChapterFilterDto"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"paginationDto"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"PaginationDto"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderByDto"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"OrderByDto"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getChapters"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"chapterFilterDto"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chapterFilterDto"}}},{"kind":"Argument","name":{"kind":"Name","value":"paginationDto"},"value":{"kind":"Variable","name":{"kind":"Name","value":"paginationDto"}}},{"kind":"Argument","name":{"kind":"Name","value":"orderByDto"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderByDto"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chapters"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"viewed"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"difficulty"}}]}},{"kind":"Field","name":{"kind":"Name","value":"metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"currentPage"}},{"kind":"Field","name":{"kind":"Name","value":"pageSize"}},{"kind":"Field","name":{"kind":"Name","value":"totalElements"}},{"kind":"Field","name":{"kind":"Name","value":"totalPages"}}]}}]}}]}}]} as unknown as DocumentNode<GetChaptersQuery, GetChaptersQueryVariables>;
 export const GetExercisesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetExercises"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"chapterId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getExercises"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"chapterId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chapterId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<GetExercisesQuery, GetExercisesQueryVariables>;
 export const GetExerciseDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetExercise"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getExerciseById"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"construction"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"questions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"question"}},{"kind":"Field","name":{"kind":"Name","value":"answers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetExerciseQuery, GetExerciseQueryVariables>;
@@ -497,15 +504,15 @@ export type Explanation = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type Login = {
+  __typename?: 'Login';
+  error?: Maybe<ErrorType>;
+  user?: Maybe<User>;
+};
+
 export type LoginDto = {
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
-};
-
-export type LoginResponse = {
-  __typename?: 'LoginResponse';
-  error?: Maybe<ErrorType>;
-  user: User;
 };
 
 export type Mutation = {
@@ -516,10 +523,11 @@ export type Mutation = {
   deleteChapter?: Maybe<Chapter>;
   deleteSearch?: Maybe<Search>;
   deleteUser: User;
-  login: LoginResponse;
+  login: Login;
   logout: Scalars['String']['output'];
+  logoutAllDevices: Scalars['String']['output'];
   refreshToken: Scalars['String']['output'];
-  register: RegisterResponse;
+  register: Register;
   updateChapter?: Maybe<Chapter>;
   updateUser: User;
 };
@@ -639,16 +647,16 @@ export type Question = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
-export type RegisterDto = {
-  email: Scalars['String']['input'];
-  fullname: Scalars['String']['input'];
-  password: Scalars['String']['input'];
-};
-
-export type RegisterResponse = {
-  __typename?: 'RegisterResponse';
+export type Register = {
+  __typename?: 'Register';
   error?: Maybe<ErrorType>;
   user?: Maybe<User>;
+};
+
+export type RegisterDto = {
+  email: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  password: Scalars['String']['input'];
 };
 
 export type Search = {
@@ -670,40 +678,45 @@ export type User = {
   bio?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
   email: Scalars['String']['output'];
-  fullname: Scalars['String']['output'];
   id: Scalars['String']['output'];
+  name: Scalars['String']['output'];
   password: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
 
-export type LoginUserMutationVariables = Exact<{
+export type LoginMutationVariables = Exact<{
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
 }>;
 
 
-export type LoginUserMutation = { __typename?: 'Mutation', login: { __typename?: 'LoginResponse', user: { __typename?: 'User', email: string, id: string, fullname: string, avatar?: string | null } } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'Login', user?: { __typename?: 'User', email: string, id: string, name: string, avatar?: string | null } | null } };
 
-export type LogoutUserMutationVariables = Exact<{ [key: string]: never; }>;
+export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type LogoutUserMutation = { __typename?: 'Mutation', logout: string };
+export type LogoutMutation = { __typename?: 'Mutation', logout: string };
 
-export type RegisterUserMutationVariables = Exact<{
-  fullname: Scalars['String']['input'];
+export type LogoutAllDevicesMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LogoutAllDevicesMutation = { __typename?: 'Mutation', logoutAllDevices: string };
+
+export type RegisterMutationVariables = Exact<{
+  name: Scalars['String']['input'];
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
 }>;
 
 
-export type RegisterUserMutation = { __typename?: 'Mutation', register: { __typename?: 'RegisterResponse', user?: { __typename?: 'User', id: string, fullname: string, email: string } | null } };
+export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'Register', user?: { __typename?: 'User', id: string, name: string, email: string } | null } };
 
 export type DeleteUserMutationVariables = Exact<{
   id: Scalars['String']['input'];
 }>;
 
 
-export type DeleteUserMutation = { __typename?: 'Mutation', deleteUser: { __typename?: 'User', fullname: string } };
+export type DeleteUserMutation = { __typename?: 'Mutation', deleteUser: { __typename?: 'User', name: string } };
 
 export type UpdateUserMutationVariables = Exact<{
   id: Scalars['String']['input'];
@@ -711,7 +724,7 @@ export type UpdateUserMutationVariables = Exact<{
 }>;
 
 
-export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'User', id: string, avatar?: string | null, fullname: string } };
+export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'User', id: string, avatar?: string | null, name: string } };
 
 export type GetChaptersQueryVariables = Exact<{
   chapterFilterDto?: InputMaybe<ChapterFilterDto>;
@@ -745,120 +758,148 @@ export type GetSearchsQueryVariables = Exact<{
 export type GetSearchsQuery = { __typename?: 'Query', getSearchs?: Array<{ __typename?: 'Search', id: string, name: string, type?: Array<string> | null, description?: string | null }> | null };
 
 
-export const LoginUserDocument = gql`
-    mutation LoginUser($email: String!, $password: String!) {
+export const LoginDocument = gql`
+    mutation Login($email: String!, $password: String!) {
   login(loginInput: {email: $email, password: $password}) {
     user {
       email
       id
-      fullname
+      name
       avatar
     }
   }
 }
     `;
-export type LoginUserMutationFn = Apollo.MutationFunction<LoginUserMutation, LoginUserMutationVariables>;
+export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutationVariables>;
 
 /**
- * __useLoginUserMutation__
+ * __useLoginMutation__
  *
- * To run a mutation, you first call `useLoginUserMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useLoginUserMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useLoginMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLoginMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [loginUserMutation, { data, loading, error }] = useLoginUserMutation({
+ * const [loginMutation, { data, loading, error }] = useLoginMutation({
  *   variables: {
  *      email: // value for 'email'
  *      password: // value for 'password'
  *   },
  * });
  */
-export function useLoginUserMutation(baseOptions?: Apollo.MutationHookOptions<LoginUserMutation, LoginUserMutationVariables>) {
+export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginMutation, LoginMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<LoginUserMutation, LoginUserMutationVariables>(LoginUserDocument, options);
+        return Apollo.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument, options);
       }
-export type LoginUserMutationHookResult = ReturnType<typeof useLoginUserMutation>;
-export type LoginUserMutationResult = Apollo.MutationResult<LoginUserMutation>;
-export type LoginUserMutationOptions = Apollo.BaseMutationOptions<LoginUserMutation, LoginUserMutationVariables>;
-export const LogoutUserDocument = gql`
-    mutation LogoutUser {
+export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
+export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
+export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
+export const LogoutDocument = gql`
+    mutation Logout {
   logout
 }
     `;
-export type LogoutUserMutationFn = Apollo.MutationFunction<LogoutUserMutation, LogoutUserMutationVariables>;
+export type LogoutMutationFn = Apollo.MutationFunction<LogoutMutation, LogoutMutationVariables>;
 
 /**
- * __useLogoutUserMutation__
+ * __useLogoutMutation__
  *
- * To run a mutation, you first call `useLogoutUserMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useLogoutUserMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useLogoutMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLogoutMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [logoutUserMutation, { data, loading, error }] = useLogoutUserMutation({
+ * const [logoutMutation, { data, loading, error }] = useLogoutMutation({
  *   variables: {
  *   },
  * });
  */
-export function useLogoutUserMutation(baseOptions?: Apollo.MutationHookOptions<LogoutUserMutation, LogoutUserMutationVariables>) {
+export function useLogoutMutation(baseOptions?: Apollo.MutationHookOptions<LogoutMutation, LogoutMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<LogoutUserMutation, LogoutUserMutationVariables>(LogoutUserDocument, options);
+        return Apollo.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument, options);
       }
-export type LogoutUserMutationHookResult = ReturnType<typeof useLogoutUserMutation>;
-export type LogoutUserMutationResult = Apollo.MutationResult<LogoutUserMutation>;
-export type LogoutUserMutationOptions = Apollo.BaseMutationOptions<LogoutUserMutation, LogoutUserMutationVariables>;
-export const RegisterUserDocument = gql`
-    mutation RegisterUser($fullname: String!, $email: String!, $password: String!) {
-  register(
-    registerInput: {fullname: $fullname, email: $email, password: $password}
-  ) {
+export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
+export type LogoutMutationResult = Apollo.MutationResult<LogoutMutation>;
+export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
+export const LogoutAllDevicesDocument = gql`
+    mutation LogoutAllDevices {
+  logoutAllDevices
+}
+    `;
+export type LogoutAllDevicesMutationFn = Apollo.MutationFunction<LogoutAllDevicesMutation, LogoutAllDevicesMutationVariables>;
+
+/**
+ * __useLogoutAllDevicesMutation__
+ *
+ * To run a mutation, you first call `useLogoutAllDevicesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLogoutAllDevicesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [logoutAllDevicesMutation, { data, loading, error }] = useLogoutAllDevicesMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useLogoutAllDevicesMutation(baseOptions?: Apollo.MutationHookOptions<LogoutAllDevicesMutation, LogoutAllDevicesMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<LogoutAllDevicesMutation, LogoutAllDevicesMutationVariables>(LogoutAllDevicesDocument, options);
+      }
+export type LogoutAllDevicesMutationHookResult = ReturnType<typeof useLogoutAllDevicesMutation>;
+export type LogoutAllDevicesMutationResult = Apollo.MutationResult<LogoutAllDevicesMutation>;
+export type LogoutAllDevicesMutationOptions = Apollo.BaseMutationOptions<LogoutAllDevicesMutation, LogoutAllDevicesMutationVariables>;
+export const RegisterDocument = gql`
+    mutation Register($name: String!, $email: String!, $password: String!) {
+  register(registerInput: {name: $name, email: $email, password: $password}) {
     user {
       id
-      fullname
+      name
       email
     }
   }
 }
     `;
-export type RegisterUserMutationFn = Apollo.MutationFunction<RegisterUserMutation, RegisterUserMutationVariables>;
+export type RegisterMutationFn = Apollo.MutationFunction<RegisterMutation, RegisterMutationVariables>;
 
 /**
- * __useRegisterUserMutation__
+ * __useRegisterMutation__
  *
- * To run a mutation, you first call `useRegisterUserMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useRegisterUserMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useRegisterMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRegisterMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [registerUserMutation, { data, loading, error }] = useRegisterUserMutation({
+ * const [registerMutation, { data, loading, error }] = useRegisterMutation({
  *   variables: {
- *      fullname: // value for 'fullname'
+ *      name: // value for 'name'
  *      email: // value for 'email'
  *      password: // value for 'password'
  *   },
  * });
  */
-export function useRegisterUserMutation(baseOptions?: Apollo.MutationHookOptions<RegisterUserMutation, RegisterUserMutationVariables>) {
+export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<RegisterMutation, RegisterMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<RegisterUserMutation, RegisterUserMutationVariables>(RegisterUserDocument, options);
+        return Apollo.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument, options);
       }
-export type RegisterUserMutationHookResult = ReturnType<typeof useRegisterUserMutation>;
-export type RegisterUserMutationResult = Apollo.MutationResult<RegisterUserMutation>;
-export type RegisterUserMutationOptions = Apollo.BaseMutationOptions<RegisterUserMutation, RegisterUserMutationVariables>;
+export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
+export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
+export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
 export const DeleteUserDocument = gql`
     mutation deleteUser($id: String!) {
   deleteUser(id: $id) {
-    fullname
+    name
   }
 }
     `;
@@ -893,7 +934,7 @@ export const UpdateUserDocument = gql`
   updateUser(id: $id, avatar: $avatar) {
     id
     avatar
-    fullname
+    name
   }
 }
     `;
