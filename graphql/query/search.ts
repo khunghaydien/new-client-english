@@ -10,7 +10,9 @@ export const GET_SEARCHS = gql`
     ) {
       id
       name
-      type
+      relativeId
+      scope
+      target
       description
     }
   }
