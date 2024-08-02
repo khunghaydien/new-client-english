@@ -68,21 +68,6 @@ export const getFirstNSegments = (url: string, rank: number = 2): string => {
   return url;
 }
 
-export const categorize = (data: string[]) => {
-  return data.reduce((acc, item) => {
-    if (Object.values(ECHAPTER).includes(item)) {
-      acc.ECHAPTER.push(item);
-    } else if (Object.values(EDIFFICULTY).includes(item)) {
-      acc.EDIFFICULTY = item;
-    } else if (Object.values(ECHAPTERSTATUS).includes(item)) {
-      acc.ECHAPTERSTATUS = item;
-    } else if (Object.values(EEXERCISE).includes(item)) {
-      acc.EEXERCISE = item;
-    }
-    return acc;
-  }, CATEGORIES);
-}
-
 export const setCanvasPreview = (
   image: HTMLImageElement,
   canvas: HTMLCanvasElement,

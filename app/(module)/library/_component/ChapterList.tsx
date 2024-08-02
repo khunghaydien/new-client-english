@@ -8,13 +8,11 @@ import { usePathname, useRouter } from "next/navigation";
 import { Chapter } from "@/gql/graphql";
 import { useQuery } from "@apollo/client";
 import { GET_CHAPTERS } from "@/graphql/query/library";
-import { isEmpty, some } from "lodash";
+import { isEmpty } from "lodash";
 import { TbDatabaseOff } from "react-icons/tb";
 import { ListLoading } from "@/components/common/loading";
 import InputSearch, { ISearchOutput } from "@/components/ui/input-search";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { categorize } from "@/lib/utils";
-import { DIFFICULTY_MAPPING } from "@/const/library";
 import {
   Pagination,
   PaginationContent,
@@ -61,12 +59,8 @@ const ChapterCard = ({ chapter, onClick }: IChapterCard) => {
         </div>
         <div className="flex justify-between">
           <div className="flex items-center gap-2">
-            {type.map((item, index) => (
-              <Badge key={index} variant={"outline"}>
-                {item}
-              </Badge>
-            ))}
-            {<Badge variant={"outline"}>{difficulty}</Badge>}
+            <Badge variant={"outline"}>{type}</Badge>
+            <Badge variant={"outline"}>{difficulty}</Badge>
           </div>
           <div className="flex flex-center justify-between text-sm">
             {formatDistance(new Date(createdAt), new Date(), {
@@ -126,22 +120,23 @@ const ChapterList = () => {
     (search: ISearchOutput) => {
       const updatedFilterDto: any = { ...chapterFilterDto };
       if (search.value) {
-        if (!isEmpty(search.value.type)) {
-          updatedFilterDto.difficulty = categorize(
-            search.value.type ?? []
-          ).EDIFFICULTY;
-          updatedFilterDto.name = search.label;
+        const { scope, relativeId } = search.value;
+        const { type, difficulty, status } = scope;
+        if (relativeId) {
+          router.push(`${pathName}/${relativeId}`);
         } else {
-          const description = search.value.description;
-          if (description && DIFFICULTY_MAPPING[description]) {
-            updatedFilterDto.difficulty = DIFFICULTY_MAPPING[description];
-          }
+          updatedFilterDto.difficulty = difficulty;
+          updatedFilterDto.type = type;
+          updatedFilterDto.status = status;
+          refetch({ chapterFilterDto: updatedFilterDto });
         }
       } else {
         updatedFilterDto.difficulty = "";
+        updatedFilterDto.type = "";
+        updatedFilterDto.status = "";
         updatedFilterDto.name = search.label;
+        refetch({ chapterFilterDto: updatedFilterDto });
       }
-      refetch({ chapterFilterDto: updatedFilterDto });
     },
     [chapterFilterDto, refetch]
   );
@@ -150,14 +145,17 @@ const ChapterList = () => {
     return data?.getChapters?.metadata;
   }, [data]);
 
+  const scope = useMemo(() => {
+    return {
+      type: type?.toLocaleUpperCase() ?? "",
+    };
+  }, [type]);
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex gap-6 items-start w-full">
         <div className="max-w-[600px] w-full">
-          <InputSearch
-            type={type ? [type.toUpperCase()] : undefined}
-            onSearch={handleSearch}
-          />
+          <InputSearch scope={scope} onSearch={handleSearch} />
         </div>
       </div>
       <ScrollArea style={{ height: "calc(100vh - 250px)" }}>
@@ -212,7 +210,7 @@ const ChapterList = () => {
               <PaginationPrevious href="#" />
             </PaginationItem>
             {Array.from({ length: pagination?.totalPages }).map((_, index) => (
-              <PaginationItem>
+              <PaginationItem key={index}>
                 <Button
                   variant={
                     pagination?.currentPage === index + 1 ? "default" : "ghost"

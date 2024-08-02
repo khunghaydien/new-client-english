@@ -1,15 +1,16 @@
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { Input } from "./input";
 import { useQuery } from "@apollo/client";
 import { GET_SEARCHS } from "@/graphql/query/search";
 import { Search as ISearch } from "@/gql/graphql";
 import { isEmpty } from "lodash";
 import { ImSpinner2 } from "react-icons/im";
-import { useClickOutside } from "@/lib/utils";
+import { getTextEllipsis, useClickOutside } from "@/lib/utils";
 import { debounce } from "lodash";
 import { INPUT_TIME_DELAY } from "@/const/app";
 import { FaBan } from "react-icons/fa";
 import clsx from "clsx";
+import Link from "next/link";
 
 export interface ISearchOutput {
   value?: ISearch | null;
@@ -17,12 +18,12 @@ export interface ISearchOutput {
 }
 
 interface IInputSearch {
-  type?: String[];
+  scope: Record<string, string>;
   onSearch: (search: ISearchOutput) => void;
   className?: string;
 }
 
-const InputSearch = ({ type, onSearch, className }: IInputSearch) => {
+const InputSearch = ({ scope, onSearch, className }: IInputSearch) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const inputSearchRef = useRef<HTMLDivElement>(null);
   const [showSearchEngine, setShowSearchEngine] = useState(false);
@@ -31,41 +32,63 @@ const InputSearch = ({ type, onSearch, className }: IInputSearch) => {
   const { data, loading, refetch } = useQuery(GET_SEARCHS, {
     skip: !search.label,
   });
-  const debounceInput = debounce((value: string) => {
-    setActiveIndex(-1);
-    setShowSearchEngine(true);
-    refetch({
-      searchFilterDto: { name: value, ...(type && { type }) },
-    });
-  }, INPUT_TIME_DELAY);
+  const debounceInput = useCallback(
+    debounce((value: string) => {
+      setActiveIndex(-1);
+      setShowSearchEngine(true);
+      refetch({
+        searchFilterDto: {
+          name: value,
+          ...(!isEmpty(Object.keys(scope)) && { scope: JSON.stringify(scope) }),
+        },
+      });
+    }, INPUT_TIME_DELAY),
+    [refetch]
+  );
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch({ value: null, label: event.target.value });
     debounceInput(event.target.value);
   };
 
-  const formatLabel = (name: string, type: string[], description: string) => {
+  const formatLabel = ({
+    name,
+    scope,
+    target,
+    relativeId,
+    description,
+  }: ISearch) => {
     return (
       <div className="flex items-center justify-between">
         <div>
-          <div className="flex items-center gap-4">
-            {name}
-            {!isEmpty(type) && (
-              <div className="flex items-center justify-center gap-2">
-                {type.map((item: string, index) => (
-                  <div
-                    key={index}
-                    className="px-2 bg-primary/20 rounded-lg hover:bg-primary/30"
-                  >
-                    {item.toLocaleLowerCase()}
-                  </div>
-                ))}
-              </div>
+          <div className="flex items-center gap-2">
+            {getTextEllipsis(name)}
+            {relativeId && (
+              <>
+                <div>-</div>
+                <div className="text-blue-400">
+                  {target.toLocaleLowerCase()}.
+                  {name.trim().split(" ").join("-")}
+                </div>
+              </>
             )}
           </div>
-          {description && <div className="text-xs">{description}</div>}
+          {(!isEmpty(scope) || description) && (
+            <div className="text-xs flex flex-wrap gap-2">
+              {description && <div>{description}</div>}
+              {!isEmpty(scope) && (
+                <div className="flex items-center justify-center gap-2">
+                  {Object.values(scope).map((item: string, index) => (
+                    <div key={index} className="px-2 rounded-lg bg-primary/20">
+                      {item.toLocaleLowerCase()}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
-        {isEmpty(type) && <FaBan className="text-destructive" />}
+        {!relativeId && <FaBan className="text-destructive" />}
       </div>
     );
   };
@@ -109,7 +132,7 @@ const InputSearch = ({ type, onSearch, className }: IInputSearch) => {
     <div className={clsx(className, "relative w-full")} ref={inputSearchRef}>
       <Input
         type="text"
-        value={search.label}
+        value={search.label ?? ""}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
         className={"w-full  bg-muted h-[40px]"}
@@ -132,11 +155,7 @@ const InputSearch = ({ type, onSearch, className }: IInputSearch) => {
                     index === activeIndex ? "bg-background" : ""
                   }`}
                 >
-                  {formatLabel(
-                    search.name,
-                    search.type ?? [],
-                    search.description ?? ""
-                  )}
+                  {formatLabel(search)}
                 </li>
               ))}
             </div>

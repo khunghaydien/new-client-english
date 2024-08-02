@@ -19,6 +19,8 @@ export type Scalars = {
   Float: { input: number; output: number; }
   /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
   DateTime: { input: any; output: any; }
+  /** The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
+  JSONObject: { input: any; output: any; }
 };
 
 export type Answer = {
@@ -31,6 +33,11 @@ export type Answer = {
   value: Scalars['String']['output'];
 };
 
+export type BatchPayload = {
+  __typename?: 'BatchPayload';
+  count: Scalars['Int']['output'];
+};
+
 export type Chapter = {
   __typename?: 'Chapter';
   createdAt: Scalars['DateTime']['output'];
@@ -41,7 +48,7 @@ export type Chapter = {
   id: Scalars['String']['output'];
   name: Scalars['String']['output'];
   status: Scalars['String']['output'];
-  type: Array<Scalars['String']['output']>;
+  type: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
   viewed: Scalars['Float']['output'];
 };
@@ -50,20 +57,20 @@ export type ChapterCreateDto = {
   description: Scalars['String']['input'];
   difficulty: Scalars['String']['input'];
   name: Scalars['String']['input'];
-  type: Array<Scalars['String']['input']>;
+  type: Scalars['String']['input'];
 };
 
 export type ChapterFilterDto = {
   difficulty?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
-  type?: InputMaybe<Array<Scalars['String']['input']>>;
+  type?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type ChapterUpdateDto = {
   description?: InputMaybe<Scalars['String']['input']>;
   difficulty?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
-  type?: InputMaybe<Array<Scalars['String']['input']>>;
+  type?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type Chapters = {
@@ -88,12 +95,6 @@ export type CreateExerciseDto = {
 export type CreateQuestionDto = {
   answers: Array<CreateAnswerDto>;
   question: Scalars['String']['input'];
-};
-
-export type CreateSearchDto = {
-  id: Scalars['String']['input'];
-  name: Scalars['String']['input'];
-  type?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
 export type ErrorType = {
@@ -138,11 +139,9 @@ export type LoginDto = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createChapter?: Maybe<Chapter>;
+  createChapter?: Maybe<BatchPayload>;
   createExercise?: Maybe<Exercise>;
-  createSearch?: Maybe<Search>;
   deleteChapter?: Maybe<Chapter>;
-  deleteSearch?: Maybe<Search>;
   deleteUser: User;
   login: Login;
   logout: Scalars['String']['output'];
@@ -155,7 +154,7 @@ export type Mutation = {
 
 
 export type MutationCreateChapterArgs = {
-  chapterCreateDto: ChapterCreateDto;
+  chapterCreateDto: Array<ChapterCreateDto>;
 };
 
 
@@ -165,17 +164,7 @@ export type MutationCreateExerciseArgs = {
 };
 
 
-export type MutationCreateSearchArgs = {
-  searchCreateDto: CreateSearchDto;
-};
-
-
 export type MutationDeleteChapterArgs = {
-  id: Scalars['String']['input'];
-};
-
-
-export type MutationDeleteSearchArgs = {
   id: Scalars['String']['input'];
 };
 
@@ -285,12 +274,13 @@ export type Search = {
   description?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   name: Scalars['String']['output'];
-  type?: Maybe<Array<Scalars['String']['output']>>;
+  relativeId?: Maybe<Scalars['String']['output']>;
+  scope: Record<string, string>;
+  target: Scalars['String']['output'];
 };
 
 export type SearchFilterDto = {
   name?: InputMaybe<Scalars['String']['input']>;
-  type?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
 export type User = {
@@ -354,7 +344,7 @@ export type GetChaptersQueryVariables = Exact<{
 }>;
 
 
-export type GetChaptersQuery = { __typename?: 'Query', getChapters?: { __typename?: 'Chapters', chapters: Array<{ __typename?: 'Chapter', id: string, name: string, viewed: number, createdAt: any, updatedAt: any, status: string, type: Array<string>, difficulty: string }>, metadata: { __typename?: 'Pagination', currentPage: number, pageSize: number, totalElements: number, totalPages: number } } | null };
+export type GetChaptersQuery = { __typename?: 'Query', getChapters?: { __typename?: 'Chapters', chapters: Array<{ __typename?: 'Chapter', id: string, name: string, viewed: number, createdAt: any, updatedAt: any, status: string, type: string, difficulty: string }>, metadata: { __typename?: 'Pagination', currentPage: number, pageSize: number, totalElements: number, totalPages: number } } | null };
 
 export type GetExercisesQueryVariables = Exact<{
   chapterId: Scalars['String']['input'];
@@ -376,19 +366,19 @@ export type GetSearchsQueryVariables = Exact<{
 }>;
 
 
-export type GetSearchsQuery = { __typename?: 'Query', getSearchs?: Array<{ __typename?: 'Search', id: string, name: string, type?: Array<string> | null, description?: string | null }> | null };
+export type GetSearchsQuery = { __typename?: 'Query', getSearchs?: Array<{ __typename?: 'Search', id: string, name: string, relativeId?: string | null, scope: any, target: string, description?: string | null }> | null };
 
 
-export const LoginDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"Login"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"password"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"loginInput"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"password"},"value":{"kind":"Variable","name":{"kind":"Name","value":"password"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}}]}}]}}]} as unknown as DocumentNode<LoginMutation, LoginMutationVariables>;
-export const LogoutDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"Logout"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"logout"}}]}}]} as unknown as DocumentNode<LogoutMutation, LogoutMutationVariables>;
-export const LogoutAllDevicesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"LogoutAllDevices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"logoutAllDevices"}}]}}]} as unknown as DocumentNode<LogoutAllDevicesMutation, LogoutAllDevicesMutationVariables>;
-export const RegisterDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"Register"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"password"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"register"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"registerInput"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"name"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"password"},"value":{"kind":"Variable","name":{"kind":"Name","value":"password"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]}}]} as unknown as DocumentNode<RegisterMutation, RegisterMutationVariables>;
-export const DeleteUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"deleteUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<DeleteUserMutation, DeleteUserMutationVariables>;
-export const UpdateUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"avatar"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"avatar"},"value":{"kind":"Variable","name":{"kind":"Name","value":"avatar"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<UpdateUserMutation, UpdateUserMutationVariables>;
-export const GetChaptersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetChapters"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"chapterFilterDto"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"ChapterFilterDto"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"paginationDto"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"PaginationDto"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderByDto"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"OrderByDto"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getChapters"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"chapterFilterDto"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chapterFilterDto"}}},{"kind":"Argument","name":{"kind":"Name","value":"paginationDto"},"value":{"kind":"Variable","name":{"kind":"Name","value":"paginationDto"}}},{"kind":"Argument","name":{"kind":"Name","value":"orderByDto"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderByDto"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chapters"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"viewed"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"difficulty"}}]}},{"kind":"Field","name":{"kind":"Name","value":"metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"currentPage"}},{"kind":"Field","name":{"kind":"Name","value":"pageSize"}},{"kind":"Field","name":{"kind":"Name","value":"totalElements"}},{"kind":"Field","name":{"kind":"Name","value":"totalPages"}}]}}]}}]}}]} as unknown as DocumentNode<GetChaptersQuery, GetChaptersQueryVariables>;
-export const GetExercisesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetExercises"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"chapterId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getExercises"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"chapterId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chapterId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<GetExercisesQuery, GetExercisesQueryVariables>;
-export const GetExerciseDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetExercise"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getExerciseById"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"construction"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"questions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"question"}},{"kind":"Field","name":{"kind":"Name","value":"answers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetExerciseQuery, GetExerciseQueryVariables>;
-export const GetSearchsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetSearchs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"searchFilterDto"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"SearchFilterDto"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"paginationDto"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"PaginationDto"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getSearchs"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"searchFilterDto"},"value":{"kind":"Variable","name":{"kind":"Name","value":"searchFilterDto"}}},{"kind":"Argument","name":{"kind":"Name","value":"paginationDto"},"value":{"kind":"Variable","name":{"kind":"Name","value":"paginationDto"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]} as unknown as DocumentNode<GetSearchsQuery, GetSearchsQueryVariables>;
+export const LoginDocument = { "kind": "Document", "definitions": [{ "kind": "OperationDefinition", "operation": "mutation", "name": { "kind": "Name", "value": "Login" }, "variableDefinitions": [{ "kind": "VariableDefinition", "variable": { "kind": "Variable", "name": { "kind": "Name", "value": "email" } }, "type": { "kind": "NonNullType", "type": { "kind": "NamedType", "name": { "kind": "Name", "value": "String" } } } }, { "kind": "VariableDefinition", "variable": { "kind": "Variable", "name": { "kind": "Name", "value": "password" } }, "type": { "kind": "NonNullType", "type": { "kind": "NamedType", "name": { "kind": "Name", "value": "String" } } } }], "selectionSet": { "kind": "SelectionSet", "selections": [{ "kind": "Field", "name": { "kind": "Name", "value": "login" }, "arguments": [{ "kind": "Argument", "name": { "kind": "Name", "value": "loginInput" }, "value": { "kind": "ObjectValue", "fields": [{ "kind": "ObjectField", "name": { "kind": "Name", "value": "email" }, "value": { "kind": "Variable", "name": { "kind": "Name", "value": "email" } } }, { "kind": "ObjectField", "name": { "kind": "Name", "value": "password" }, "value": { "kind": "Variable", "name": { "kind": "Name", "value": "password" } } }] } }], "selectionSet": { "kind": "SelectionSet", "selections": [{ "kind": "Field", "name": { "kind": "Name", "value": "user" }, "selectionSet": { "kind": "SelectionSet", "selections": [{ "kind": "Field", "name": { "kind": "Name", "value": "email" } }, { "kind": "Field", "name": { "kind": "Name", "value": "id" } }, { "kind": "Field", "name": { "kind": "Name", "value": "name" } }, { "kind": "Field", "name": { "kind": "Name", "value": "avatar" } }] } }] } }] } }] } as unknown as DocumentNode<LoginMutation, LoginMutationVariables>;
+export const LogoutDocument = { "kind": "Document", "definitions": [{ "kind": "OperationDefinition", "operation": "mutation", "name": { "kind": "Name", "value": "Logout" }, "selectionSet": { "kind": "SelectionSet", "selections": [{ "kind": "Field", "name": { "kind": "Name", "value": "logout" } }] } }] } as unknown as DocumentNode<LogoutMutation, LogoutMutationVariables>;
+export const LogoutAllDevicesDocument = { "kind": "Document", "definitions": [{ "kind": "OperationDefinition", "operation": "mutation", "name": { "kind": "Name", "value": "LogoutAllDevices" }, "selectionSet": { "kind": "SelectionSet", "selections": [{ "kind": "Field", "name": { "kind": "Name", "value": "logoutAllDevices" } }] } }] } as unknown as DocumentNode<LogoutAllDevicesMutation, LogoutAllDevicesMutationVariables>;
+export const RegisterDocument = { "kind": "Document", "definitions": [{ "kind": "OperationDefinition", "operation": "mutation", "name": { "kind": "Name", "value": "Register" }, "variableDefinitions": [{ "kind": "VariableDefinition", "variable": { "kind": "Variable", "name": { "kind": "Name", "value": "name" } }, "type": { "kind": "NonNullType", "type": { "kind": "NamedType", "name": { "kind": "Name", "value": "String" } } } }, { "kind": "VariableDefinition", "variable": { "kind": "Variable", "name": { "kind": "Name", "value": "email" } }, "type": { "kind": "NonNullType", "type": { "kind": "NamedType", "name": { "kind": "Name", "value": "String" } } } }, { "kind": "VariableDefinition", "variable": { "kind": "Variable", "name": { "kind": "Name", "value": "password" } }, "type": { "kind": "NonNullType", "type": { "kind": "NamedType", "name": { "kind": "Name", "value": "String" } } } }], "selectionSet": { "kind": "SelectionSet", "selections": [{ "kind": "Field", "name": { "kind": "Name", "value": "register" }, "arguments": [{ "kind": "Argument", "name": { "kind": "Name", "value": "registerInput" }, "value": { "kind": "ObjectValue", "fields": [{ "kind": "ObjectField", "name": { "kind": "Name", "value": "name" }, "value": { "kind": "Variable", "name": { "kind": "Name", "value": "name" } } }, { "kind": "ObjectField", "name": { "kind": "Name", "value": "email" }, "value": { "kind": "Variable", "name": { "kind": "Name", "value": "email" } } }, { "kind": "ObjectField", "name": { "kind": "Name", "value": "password" }, "value": { "kind": "Variable", "name": { "kind": "Name", "value": "password" } } }] } }], "selectionSet": { "kind": "SelectionSet", "selections": [{ "kind": "Field", "name": { "kind": "Name", "value": "user" }, "selectionSet": { "kind": "SelectionSet", "selections": [{ "kind": "Field", "name": { "kind": "Name", "value": "id" } }, { "kind": "Field", "name": { "kind": "Name", "value": "name" } }, { "kind": "Field", "name": { "kind": "Name", "value": "email" } }] } }] } }] } }] } as unknown as DocumentNode<RegisterMutation, RegisterMutationVariables>;
+export const DeleteUserDocument = { "kind": "Document", "definitions": [{ "kind": "OperationDefinition", "operation": "mutation", "name": { "kind": "Name", "value": "deleteUser" }, "variableDefinitions": [{ "kind": "VariableDefinition", "variable": { "kind": "Variable", "name": { "kind": "Name", "value": "id" } }, "type": { "kind": "NonNullType", "type": { "kind": "NamedType", "name": { "kind": "Name", "value": "String" } } } }], "selectionSet": { "kind": "SelectionSet", "selections": [{ "kind": "Field", "name": { "kind": "Name", "value": "deleteUser" }, "arguments": [{ "kind": "Argument", "name": { "kind": "Name", "value": "id" }, "value": { "kind": "Variable", "name": { "kind": "Name", "value": "id" } } }], "selectionSet": { "kind": "SelectionSet", "selections": [{ "kind": "Field", "name": { "kind": "Name", "value": "name" } }] } }] } }] } as unknown as DocumentNode<DeleteUserMutation, DeleteUserMutationVariables>;
+export const UpdateUserDocument = { "kind": "Document", "definitions": [{ "kind": "OperationDefinition", "operation": "mutation", "name": { "kind": "Name", "value": "updateUser" }, "variableDefinitions": [{ "kind": "VariableDefinition", "variable": { "kind": "Variable", "name": { "kind": "Name", "value": "id" } }, "type": { "kind": "NonNullType", "type": { "kind": "NamedType", "name": { "kind": "Name", "value": "String" } } } }, { "kind": "VariableDefinition", "variable": { "kind": "Variable", "name": { "kind": "Name", "value": "avatar" } }, "type": { "kind": "NonNullType", "type": { "kind": "NamedType", "name": { "kind": "Name", "value": "String" } } } }], "selectionSet": { "kind": "SelectionSet", "selections": [{ "kind": "Field", "name": { "kind": "Name", "value": "updateUser" }, "arguments": [{ "kind": "Argument", "name": { "kind": "Name", "value": "id" }, "value": { "kind": "Variable", "name": { "kind": "Name", "value": "id" } } }, { "kind": "Argument", "name": { "kind": "Name", "value": "avatar" }, "value": { "kind": "Variable", "name": { "kind": "Name", "value": "avatar" } } }], "selectionSet": { "kind": "SelectionSet", "selections": [{ "kind": "Field", "name": { "kind": "Name", "value": "id" } }, { "kind": "Field", "name": { "kind": "Name", "value": "avatar" } }, { "kind": "Field", "name": { "kind": "Name", "value": "name" } }] } }] } }] } as unknown as DocumentNode<UpdateUserMutation, UpdateUserMutationVariables>;
+export const GetChaptersDocument = { "kind": "Document", "definitions": [{ "kind": "OperationDefinition", "operation": "query", "name": { "kind": "Name", "value": "GetChapters" }, "variableDefinitions": [{ "kind": "VariableDefinition", "variable": { "kind": "Variable", "name": { "kind": "Name", "value": "chapterFilterDto" } }, "type": { "kind": "NamedType", "name": { "kind": "Name", "value": "ChapterFilterDto" } } }, { "kind": "VariableDefinition", "variable": { "kind": "Variable", "name": { "kind": "Name", "value": "paginationDto" } }, "type": { "kind": "NamedType", "name": { "kind": "Name", "value": "PaginationDto" } } }, { "kind": "VariableDefinition", "variable": { "kind": "Variable", "name": { "kind": "Name", "value": "orderByDto" } }, "type": { "kind": "NamedType", "name": { "kind": "Name", "value": "OrderByDto" } } }], "selectionSet": { "kind": "SelectionSet", "selections": [{ "kind": "Field", "name": { "kind": "Name", "value": "getChapters" }, "arguments": [{ "kind": "Argument", "name": { "kind": "Name", "value": "chapterFilterDto" }, "value": { "kind": "Variable", "name": { "kind": "Name", "value": "chapterFilterDto" } } }, { "kind": "Argument", "name": { "kind": "Name", "value": "paginationDto" }, "value": { "kind": "Variable", "name": { "kind": "Name", "value": "paginationDto" } } }, { "kind": "Argument", "name": { "kind": "Name", "value": "orderByDto" }, "value": { "kind": "Variable", "name": { "kind": "Name", "value": "orderByDto" } } }], "selectionSet": { "kind": "SelectionSet", "selections": [{ "kind": "Field", "name": { "kind": "Name", "value": "chapters" }, "selectionSet": { "kind": "SelectionSet", "selections": [{ "kind": "Field", "name": { "kind": "Name", "value": "id" } }, { "kind": "Field", "name": { "kind": "Name", "value": "name" } }, { "kind": "Field", "name": { "kind": "Name", "value": "viewed" } }, { "kind": "Field", "name": { "kind": "Name", "value": "createdAt" } }, { "kind": "Field", "name": { "kind": "Name", "value": "updatedAt" } }, { "kind": "Field", "name": { "kind": "Name", "value": "status" } }, { "kind": "Field", "name": { "kind": "Name", "value": "type" } }, { "kind": "Field", "name": { "kind": "Name", "value": "difficulty" } }] } }, { "kind": "Field", "name": { "kind": "Name", "value": "metadata" }, "selectionSet": { "kind": "SelectionSet", "selections": [{ "kind": "Field", "name": { "kind": "Name", "value": "currentPage" } }, { "kind": "Field", "name": { "kind": "Name", "value": "pageSize" } }, { "kind": "Field", "name": { "kind": "Name", "value": "totalElements" } }, { "kind": "Field", "name": { "kind": "Name", "value": "totalPages" } }] } }] } }] } }] } as unknown as DocumentNode<GetChaptersQuery, GetChaptersQueryVariables>;
+export const GetExercisesDocument = { "kind": "Document", "definitions": [{ "kind": "OperationDefinition", "operation": "query", "name": { "kind": "Name", "value": "GetExercises" }, "variableDefinitions": [{ "kind": "VariableDefinition", "variable": { "kind": "Variable", "name": { "kind": "Name", "value": "chapterId" } }, "type": { "kind": "NonNullType", "type": { "kind": "NamedType", "name": { "kind": "Name", "value": "String" } } } }], "selectionSet": { "kind": "SelectionSet", "selections": [{ "kind": "Field", "name": { "kind": "Name", "value": "getExercises" }, "arguments": [{ "kind": "Argument", "name": { "kind": "Name", "value": "chapterId" }, "value": { "kind": "Variable", "name": { "kind": "Name", "value": "chapterId" } } }], "selectionSet": { "kind": "SelectionSet", "selections": [{ "kind": "Field", "name": { "kind": "Name", "value": "id" } }] } }] } }] } as unknown as DocumentNode<GetExercisesQuery, GetExercisesQueryVariables>;
+export const GetExerciseDocument = { "kind": "Document", "definitions": [{ "kind": "OperationDefinition", "operation": "query", "name": { "kind": "Name", "value": "GetExercise" }, "variableDefinitions": [{ "kind": "VariableDefinition", "variable": { "kind": "Variable", "name": { "kind": "Name", "value": "id" } }, "type": { "kind": "NonNullType", "type": { "kind": "NamedType", "name": { "kind": "Name", "value": "String" } } } }], "selectionSet": { "kind": "SelectionSet", "selections": [{ "kind": "Field", "name": { "kind": "Name", "value": "getExerciseById" }, "arguments": [{ "kind": "Argument", "name": { "kind": "Name", "value": "id" }, "value": { "kind": "Variable", "name": { "kind": "Name", "value": "id" } } }], "selectionSet": { "kind": "SelectionSet", "selections": [{ "kind": "Field", "name": { "kind": "Name", "value": "id" } }, { "kind": "Field", "name": { "kind": "Name", "value": "name" } }, { "kind": "Field", "name": { "kind": "Name", "value": "construction" } }, { "kind": "Field", "name": { "kind": "Name", "value": "type" } }, { "kind": "Field", "name": { "kind": "Name", "value": "questions" }, "selectionSet": { "kind": "SelectionSet", "selections": [{ "kind": "Field", "name": { "kind": "Name", "value": "question" } }, { "kind": "Field", "name": { "kind": "Name", "value": "answers" }, "selectionSet": { "kind": "SelectionSet", "selections": [{ "kind": "Field", "name": { "kind": "Name", "value": "id" } }, { "kind": "Field", "name": { "kind": "Name", "value": "label" } }, { "kind": "Field", "name": { "kind": "Name", "value": "value" } }] } }] } }] } }] } }] } as unknown as DocumentNode<GetExerciseQuery, GetExerciseQueryVariables>;
+export const GetSearchsDocument = { "kind": "Document", "definitions": [{ "kind": "OperationDefinition", "operation": "query", "name": { "kind": "Name", "value": "GetSearchs" }, "variableDefinitions": [{ "kind": "VariableDefinition", "variable": { "kind": "Variable", "name": { "kind": "Name", "value": "searchFilterDto" } }, "type": { "kind": "NamedType", "name": { "kind": "Name", "value": "SearchFilterDto" } } }, { "kind": "VariableDefinition", "variable": { "kind": "Variable", "name": { "kind": "Name", "value": "paginationDto" } }, "type": { "kind": "NamedType", "name": { "kind": "Name", "value": "PaginationDto" } } }], "selectionSet": { "kind": "SelectionSet", "selections": [{ "kind": "Field", "name": { "kind": "Name", "value": "getSearchs" }, "arguments": [{ "kind": "Argument", "name": { "kind": "Name", "value": "searchFilterDto" }, "value": { "kind": "Variable", "name": { "kind": "Name", "value": "searchFilterDto" } } }, { "kind": "Argument", "name": { "kind": "Name", "value": "paginationDto" }, "value": { "kind": "Variable", "name": { "kind": "Name", "value": "paginationDto" } } }], "selectionSet": { "kind": "SelectionSet", "selections": [{ "kind": "Field", "name": { "kind": "Name", "value": "id" } }, { "kind": "Field", "name": { "kind": "Name", "value": "name" } }, { "kind": "Field", "name": { "kind": "Name", "value": "relativeId" } }, { "kind": "Field", "name": { "kind": "Name", "value": "scope" } }, { "kind": "Field", "name": { "kind": "Name", "value": "target" } }, { "kind": "Field", "name": { "kind": "Name", "value": "description" } }] } }] } }] } as unknown as DocumentNode<GetSearchsQuery, GetSearchsQueryVariables>;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: { input: string; output: string; }
@@ -398,6 +388,8 @@ export type Scalars = {
   Float: { input: number; output: number; }
   /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
   DateTime: { input: any; output: any; }
+  /** The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
+  JSONObject: { input: any; output: any; }
 };
 
 export type Answer = {
@@ -410,6 +402,11 @@ export type Answer = {
   value: Scalars['String']['output'];
 };
 
+export type BatchPayload = {
+  __typename?: 'BatchPayload';
+  count: Scalars['Int']['output'];
+};
+
 export type Chapter = {
   __typename?: 'Chapter';
   createdAt: Scalars['DateTime']['output'];
@@ -420,7 +417,7 @@ export type Chapter = {
   id: Scalars['String']['output'];
   name: Scalars['String']['output'];
   status: Scalars['String']['output'];
-  type: Array<Scalars['String']['output']>;
+  type: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
   viewed: Scalars['Float']['output'];
 };
@@ -429,20 +426,20 @@ export type ChapterCreateDto = {
   description: Scalars['String']['input'];
   difficulty: Scalars['String']['input'];
   name: Scalars['String']['input'];
-  type: Array<Scalars['String']['input']>;
+  type: Scalars['String']['input'];
 };
 
 export type ChapterFilterDto = {
   difficulty?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
-  type?: InputMaybe<Array<Scalars['String']['input']>>;
+  type?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type ChapterUpdateDto = {
   description?: InputMaybe<Scalars['String']['input']>;
   difficulty?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
-  type?: InputMaybe<Array<Scalars['String']['input']>>;
+  type?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type Chapters = {
@@ -467,12 +464,6 @@ export type CreateExerciseDto = {
 export type CreateQuestionDto = {
   answers: Array<CreateAnswerDto>;
   question: Scalars['String']['input'];
-};
-
-export type CreateSearchDto = {
-  id: Scalars['String']['input'];
-  name: Scalars['String']['input'];
-  type?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
 export type ErrorType = {
@@ -517,11 +508,9 @@ export type LoginDto = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createChapter?: Maybe<Chapter>;
+  createChapter?: Maybe<BatchPayload>;
   createExercise?: Maybe<Exercise>;
-  createSearch?: Maybe<Search>;
   deleteChapter?: Maybe<Chapter>;
-  deleteSearch?: Maybe<Search>;
   deleteUser: User;
   login: Login;
   logout: Scalars['String']['output'];
@@ -534,7 +523,7 @@ export type Mutation = {
 
 
 export type MutationCreateChapterArgs = {
-  chapterCreateDto: ChapterCreateDto;
+  chapterCreateDto: Array<ChapterCreateDto>;
 };
 
 
@@ -544,17 +533,7 @@ export type MutationCreateExerciseArgs = {
 };
 
 
-export type MutationCreateSearchArgs = {
-  searchCreateDto: CreateSearchDto;
-};
-
-
 export type MutationDeleteChapterArgs = {
-  id: Scalars['String']['input'];
-};
-
-
-export type MutationDeleteSearchArgs = {
   id: Scalars['String']['input'];
 };
 
@@ -664,12 +643,13 @@ export type Search = {
   description?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   name: Scalars['String']['output'];
-  type?: Maybe<Array<Scalars['String']['output']>>;
+  relativeId?: Maybe<Scalars['String']['output']>;
+  scope: Scalars['JSONObject']['output'];
+  target: Scalars['String']['output'];
 };
 
 export type SearchFilterDto = {
   name?: InputMaybe<Scalars['String']['input']>;
-  type?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
 export type User = {
@@ -733,7 +713,7 @@ export type GetChaptersQueryVariables = Exact<{
 }>;
 
 
-export type GetChaptersQuery = { __typename?: 'Query', getChapters?: { __typename?: 'Chapters', chapters: Array<{ __typename?: 'Chapter', id: string, name: string, viewed: number, createdAt: any, updatedAt: any, status: string, type: Array<string>, difficulty: string }>, metadata: { __typename?: 'Pagination', currentPage: number, pageSize: number, totalElements: number, totalPages: number } } | null };
+export type GetChaptersQuery = { __typename?: 'Query', getChapters?: { __typename?: 'Chapters', chapters: Array<{ __typename?: 'Chapter', id: string, name: string, viewed: number, createdAt: any, updatedAt: any, status: string, type: string, difficulty: string }>, metadata: { __typename?: 'Pagination', currentPage: number, pageSize: number, totalElements: number, totalPages: number } } | null };
 
 export type GetExercisesQueryVariables = Exact<{
   chapterId: Scalars['String']['input'];
@@ -755,7 +735,7 @@ export type GetSearchsQueryVariables = Exact<{
 }>;
 
 
-export type GetSearchsQuery = { __typename?: 'Query', getSearchs?: Array<{ __typename?: 'Search', id: string, name: string, type?: Array<string> | null, description?: string | null }> | null };
+export type GetSearchsQuery = { __typename?: 'Query', getSearchs?: Array<{ __typename?: 'Search', id: string, name: string, relativeId?: string | null, scope: any, target: string, description?: string | null }> | null };
 
 
 export const LoginDocument = gql`
@@ -791,9 +771,9 @@ export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutati
  * });
  */
 export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginMutation, LoginMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument, options);
-      }
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument, options);
+}
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
@@ -821,9 +801,9 @@ export type LogoutMutationFn = Apollo.MutationFunction<LogoutMutation, LogoutMut
  * });
  */
 export function useLogoutMutation(baseOptions?: Apollo.MutationHookOptions<LogoutMutation, LogoutMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument, options);
-      }
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument, options);
+}
 export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
 export type LogoutMutationResult = Apollo.MutationResult<LogoutMutation>;
 export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
@@ -851,9 +831,9 @@ export type LogoutAllDevicesMutationFn = Apollo.MutationFunction<LogoutAllDevice
  * });
  */
 export function useLogoutAllDevicesMutation(baseOptions?: Apollo.MutationHookOptions<LogoutAllDevicesMutation, LogoutAllDevicesMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<LogoutAllDevicesMutation, LogoutAllDevicesMutationVariables>(LogoutAllDevicesDocument, options);
-      }
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<LogoutAllDevicesMutation, LogoutAllDevicesMutationVariables>(LogoutAllDevicesDocument, options);
+}
 export type LogoutAllDevicesMutationHookResult = ReturnType<typeof useLogoutAllDevicesMutation>;
 export type LogoutAllDevicesMutationResult = Apollo.MutationResult<LogoutAllDevicesMutation>;
 export type LogoutAllDevicesMutationOptions = Apollo.BaseMutationOptions<LogoutAllDevicesMutation, LogoutAllDevicesMutationVariables>;
@@ -890,9 +870,9 @@ export type RegisterMutationFn = Apollo.MutationFunction<RegisterMutation, Regis
  * });
  */
 export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<RegisterMutation, RegisterMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument, options);
-      }
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument, options);
+}
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
@@ -923,9 +903,9 @@ export type DeleteUserMutationFn = Apollo.MutationFunction<DeleteUserMutation, D
  * });
  */
 export function useDeleteUserMutation(baseOptions?: Apollo.MutationHookOptions<DeleteUserMutation, DeleteUserMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteUserMutation, DeleteUserMutationVariables>(DeleteUserDocument, options);
-      }
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<DeleteUserMutation, DeleteUserMutationVariables>(DeleteUserDocument, options);
+}
 export type DeleteUserMutationHookResult = ReturnType<typeof useDeleteUserMutation>;
 export type DeleteUserMutationResult = Apollo.MutationResult<DeleteUserMutation>;
 export type DeleteUserMutationOptions = Apollo.BaseMutationOptions<DeleteUserMutation, DeleteUserMutationVariables>;
@@ -959,9 +939,9 @@ export type UpdateUserMutationFn = Apollo.MutationFunction<UpdateUserMutation, U
  * });
  */
 export function useUpdateUserMutation(baseOptions?: Apollo.MutationHookOptions<UpdateUserMutation, UpdateUserMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateUserMutation, UpdateUserMutationVariables>(UpdateUserDocument, options);
-      }
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<UpdateUserMutation, UpdateUserMutationVariables>(UpdateUserDocument, options);
+}
 export type UpdateUserMutationHookResult = ReturnType<typeof useUpdateUserMutation>;
 export type UpdateUserMutationResult = Apollo.MutationResult<UpdateUserMutation>;
 export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<UpdateUserMutation, UpdateUserMutationVariables>;
@@ -1011,17 +991,17 @@ export const GetChaptersDocument = gql`
  * });
  */
 export function useGetChaptersQuery(baseOptions?: Apollo.QueryHookOptions<GetChaptersQuery, GetChaptersQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetChaptersQuery, GetChaptersQueryVariables>(GetChaptersDocument, options);
-      }
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetChaptersQuery, GetChaptersQueryVariables>(GetChaptersDocument, options);
+}
 export function useGetChaptersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetChaptersQuery, GetChaptersQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetChaptersQuery, GetChaptersQueryVariables>(GetChaptersDocument, options);
-        }
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetChaptersQuery, GetChaptersQueryVariables>(GetChaptersDocument, options);
+}
 export function useGetChaptersSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetChaptersQuery, GetChaptersQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GetChaptersQuery, GetChaptersQueryVariables>(GetChaptersDocument, options);
-        }
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetChaptersQuery, GetChaptersQueryVariables>(GetChaptersDocument, options);
+}
 export type GetChaptersQueryHookResult = ReturnType<typeof useGetChaptersQuery>;
 export type GetChaptersLazyQueryHookResult = ReturnType<typeof useGetChaptersLazyQuery>;
 export type GetChaptersSuspenseQueryHookResult = ReturnType<typeof useGetChaptersSuspenseQuery>;
@@ -1050,18 +1030,18 @@ export const GetExercisesDocument = gql`
  *   },
  * });
  */
-export function useGetExercisesQuery(baseOptions: Apollo.QueryHookOptions<GetExercisesQuery, GetExercisesQueryVariables> & ({ variables: GetExercisesQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetExercisesQuery, GetExercisesQueryVariables>(GetExercisesDocument, options);
-      }
+export function useGetExercisesQuery(baseOptions: Apollo.QueryHookOptions<GetExercisesQuery, GetExercisesQueryVariables> & ({ variables: GetExercisesQueryVariables; skip?: boolean; } | { skip: boolean; })) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetExercisesQuery, GetExercisesQueryVariables>(GetExercisesDocument, options);
+}
 export function useGetExercisesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetExercisesQuery, GetExercisesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetExercisesQuery, GetExercisesQueryVariables>(GetExercisesDocument, options);
-        }
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetExercisesQuery, GetExercisesQueryVariables>(GetExercisesDocument, options);
+}
 export function useGetExercisesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetExercisesQuery, GetExercisesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GetExercisesQuery, GetExercisesQueryVariables>(GetExercisesDocument, options);
-        }
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetExercisesQuery, GetExercisesQueryVariables>(GetExercisesDocument, options);
+}
 export type GetExercisesQueryHookResult = ReturnType<typeof useGetExercisesQuery>;
 export type GetExercisesLazyQueryHookResult = ReturnType<typeof useGetExercisesLazyQuery>;
 export type GetExercisesSuspenseQueryHookResult = ReturnType<typeof useGetExercisesSuspenseQuery>;
@@ -1101,18 +1081,18 @@ export const GetExerciseDocument = gql`
  *   },
  * });
  */
-export function useGetExerciseQuery(baseOptions: Apollo.QueryHookOptions<GetExerciseQuery, GetExerciseQueryVariables> & ({ variables: GetExerciseQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetExerciseQuery, GetExerciseQueryVariables>(GetExerciseDocument, options);
-      }
+export function useGetExerciseQuery(baseOptions: Apollo.QueryHookOptions<GetExerciseQuery, GetExerciseQueryVariables> & ({ variables: GetExerciseQueryVariables; skip?: boolean; } | { skip: boolean; })) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetExerciseQuery, GetExerciseQueryVariables>(GetExerciseDocument, options);
+}
 export function useGetExerciseLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetExerciseQuery, GetExerciseQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetExerciseQuery, GetExerciseQueryVariables>(GetExerciseDocument, options);
-        }
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetExerciseQuery, GetExerciseQueryVariables>(GetExerciseDocument, options);
+}
 export function useGetExerciseSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetExerciseQuery, GetExerciseQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GetExerciseQuery, GetExerciseQueryVariables>(GetExerciseDocument, options);
-        }
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetExerciseQuery, GetExerciseQueryVariables>(GetExerciseDocument, options);
+}
 export type GetExerciseQueryHookResult = ReturnType<typeof useGetExerciseQuery>;
 export type GetExerciseLazyQueryHookResult = ReturnType<typeof useGetExerciseLazyQuery>;
 export type GetExerciseSuspenseQueryHookResult = ReturnType<typeof useGetExerciseSuspenseQuery>;
@@ -1122,7 +1102,9 @@ export const GetSearchsDocument = gql`
   getSearchs(searchFilterDto: $searchFilterDto, paginationDto: $paginationDto) {
     id
     name
-    type
+    relativeId
+    scope
+    target
     description
   }
 }
@@ -1146,17 +1128,17 @@ export const GetSearchsDocument = gql`
  * });
  */
 export function useGetSearchsQuery(baseOptions?: Apollo.QueryHookOptions<GetSearchsQuery, GetSearchsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetSearchsQuery, GetSearchsQueryVariables>(GetSearchsDocument, options);
-      }
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetSearchsQuery, GetSearchsQueryVariables>(GetSearchsDocument, options);
+}
 export function useGetSearchsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSearchsQuery, GetSearchsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetSearchsQuery, GetSearchsQueryVariables>(GetSearchsDocument, options);
-        }
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetSearchsQuery, GetSearchsQueryVariables>(GetSearchsDocument, options);
+}
 export function useGetSearchsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetSearchsQuery, GetSearchsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GetSearchsQuery, GetSearchsQueryVariables>(GetSearchsDocument, options);
-        }
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetSearchsQuery, GetSearchsQueryVariables>(GetSearchsDocument, options);
+}
 export type GetSearchsQueryHookResult = ReturnType<typeof useGetSearchsQuery>;
 export type GetSearchsLazyQueryHookResult = ReturnType<typeof useGetSearchsLazyQuery>;
 export type GetSearchsSuspenseQueryHookResult = ReturnType<typeof useGetSearchsSuspenseQuery>;
