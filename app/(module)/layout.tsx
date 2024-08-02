@@ -7,14 +7,20 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import InputSearch from "@/components/ui/input-search";
+import InputSearch, { ISearchOutput } from "@/components/ui/input-search";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LOGOUT_USER } from "@/graphql/mutation/auth";
 import { useUserStore } from "@/stores/userStore";
 import { useMutation } from "@apollo/client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { lazy, ReactNode, useEffect, useState } from "react";
+import React, {
+  lazy,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 const Logo = lazy(() => import("@/components/common/logo"));
 import { MdNotifications } from "react-icons/md";
 import { MdLogout } from "react-icons/md";
@@ -74,7 +80,20 @@ function layout({ children }: { children: ReactNode }) {
     } catch (error) {}
   };
 
-  const handleSearch = () => {};
+  const handleSearch = useCallback((search: ISearchOutput) => {
+    if (search.value) {
+      const { scope, relativeId, target } = search.value;
+      if (relativeId && target) {
+        const { type } = scope;
+        router.push(
+          `/${
+            target === "Chapter" ? "library" : target.toLocaleLowerCase()
+          }/${type.toLocaleLowerCase()}/${relativeId}`
+        );
+      }
+    }
+  }, []);
+
   const handleSetting = () => {};
   const handleAccount = () => {
     router.push(`/profile/${id}`);

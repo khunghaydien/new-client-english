@@ -20,7 +20,7 @@ export const GET_CHAPTERS = gql`
         type
         difficulty
       }  
-      metadata{
+      pagination{
         currentPage
         pageSize
         totalElements

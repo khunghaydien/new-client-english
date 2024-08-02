@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Input } from "./input";
 import { useQuery } from "@apollo/client";
 import { GET_SEARCHS } from "@/graphql/query/search";
@@ -10,7 +10,6 @@ import { debounce } from "lodash";
 import { INPUT_TIME_DELAY } from "@/const/app";
 import { FaBan } from "react-icons/fa";
 import clsx from "clsx";
-import Link from "next/link";
 
 export interface ISearchOutput {
   value?: ISearch | null;
@@ -18,28 +17,30 @@ export interface ISearchOutput {
 }
 
 interface IInputSearch {
-  scope: Record<string, string>;
+  target?: string;
+  scope?: Record<string, string>;
   onSearch: (search: ISearchOutput) => void;
   className?: string;
 }
 
-const InputSearch = ({ scope, onSearch, className }: IInputSearch) => {
+const InputSearch = ({ scope, onSearch, className, target }: IInputSearch) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const inputSearchRef = useRef<HTMLDivElement>(null);
   const [showSearchEngine, setShowSearchEngine] = useState(false);
   const [activeIndex, setActiveIndex] = useState<number>(-1);
   const [search, setSearch] = useState<ISearchOutput>({});
-  const { data, loading, refetch } = useQuery(GET_SEARCHS, {
-    skip: !search.label,
-  });
+  const { data, loading, refetch } = useQuery(GET_SEARCHS);
+
   const debounceInput = useCallback(
     debounce((value: string) => {
       setActiveIndex(-1);
       setShowSearchEngine(true);
       refetch({
         searchFilterDto: {
+          target,
           name: value,
-          ...(!isEmpty(Object.keys(scope)) && { scope: JSON.stringify(scope) }),
+          ...(scope &&
+            !isEmpty(Object.keys(scope)) && { scope: JSON.stringify(scope) }),
         },
       });
     }, INPUT_TIME_DELAY),
@@ -78,11 +79,11 @@ const InputSearch = ({ scope, onSearch, className }: IInputSearch) => {
               {description && <div>{description}</div>}
               {!isEmpty(scope) && (
                 <div className="flex items-center justify-center gap-2">
-                  {Object.values(scope).map((item: string, index) => (
+                  {/* {Object.values(scope).map((item: string, index) => (
                     <div key={index} className="px-2 rounded-lg bg-primary/20">
                       {item.toLocaleLowerCase()}
                     </div>
-                  ))}
+                  ))} */}
                 </div>
               )}
             </div>
@@ -133,6 +134,7 @@ const InputSearch = ({ scope, onSearch, className }: IInputSearch) => {
       <Input
         type="text"
         value={search.label ?? ""}
+        onClick={() => setShowSearchEngine(true)}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
         className={"w-full  bg-muted h-[40px]"}
