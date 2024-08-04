@@ -29,7 +29,15 @@ const InputSearch = ({ scope, onSearch, className, target }: IInputSearch) => {
   const [showSearchEngine, setShowSearchEngine] = useState(false);
   const [activeIndex, setActiveIndex] = useState<number>(-1);
   const [search, setSearch] = useState<ISearchOutput>({});
-  const { data, loading, refetch } = useQuery(GET_SEARCHS);
+  const { data, loading, refetch } = useQuery(GET_SEARCHS, {
+    variables: {
+      searchFilterDto: {
+        target,
+        ...(scope &&
+          !isEmpty(Object.keys(scope)) && { scope: JSON.stringify(scope) }),
+      },
+    }
+  });
 
   const debounceInput = useCallback(
     debounce((value: string) => {
@@ -79,11 +87,11 @@ const InputSearch = ({ scope, onSearch, className, target }: IInputSearch) => {
               {description && <div>{description}</div>}
               {!isEmpty(scope) && (
                 <div className="flex items-center justify-center gap-2">
-                  {/* {Object.values(scope).map((item: string, index) => (
+                  {Object.values(scope as Record<string, string>).map((item: string, index: number) => (
                     <div key={index} className="px-2 rounded-lg bg-primary/20">
                       {item.toLocaleLowerCase()}
                     </div>
-                  ))} */}
+                  ))}
                 </div>
               )}
             </div>
@@ -153,9 +161,8 @@ const InputSearch = ({ scope, onSearch, className, target }: IInputSearch) => {
                 <li
                   key={search.id}
                   onClick={() => handleClickSearchEngine(search)}
-                  className={`cursor-pointer hover:bg-background px-3 py-1 rounded-lg  ${
-                    index === activeIndex ? "bg-background" : ""
-                  }`}
+                  className={`cursor-pointer hover:bg-background px-3 py-1 rounded-lg  ${index === activeIndex ? "bg-background" : ""
+                    }`}
                 >
                   {formatLabel(search)}
                 </li>

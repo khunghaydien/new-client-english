@@ -1,8 +1,10 @@
+// layout.tsx
 "use client";
 import NavSidebar from "@/components/common/navigation-sidebar";
 import { libraryRouter } from "@/const/router";
-import React, { ReactNode } from "react";
-function layout({ children }: { children: ReactNode }) {
+import React, { ReactNode, } from "react";
+
+function Layout({ children }: { children: ReactNode }) {
   return (
     <div className="flex items-start w-full">
       <nav className="w-[300px] min-h-[calc(100vh-70px)] p-6">
@@ -15,4 +17,4 @@ function layout({ children }: { children: ReactNode }) {
   );
 }
 
-export default layout;
+export default Layout;

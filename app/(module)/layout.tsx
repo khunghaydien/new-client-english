@@ -77,7 +77,7 @@ function layout({ children }: { children: ReactNode }) {
       logout();
       await logoutUser();
       router.push("/sign-in");
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const handleSearch = useCallback((search: ISearchOutput) => {
@@ -86,15 +86,14 @@ function layout({ children }: { children: ReactNode }) {
       if (relativeId && target) {
         const { type } = scope;
         router.push(
-          `/${
-            target === "Chapter" ? "library" : target.toLocaleLowerCase()
+          `/${target === "Chapter" ? "library" : target.toLocaleLowerCase()
           }/${type.toLocaleLowerCase()}/${relativeId}`
         );
       }
     }
   }, []);
 
-  const handleSetting = () => {};
+  const handleSetting = () => { };
   const handleAccount = () => {
     router.push(`/profile/${id}`);
   };
