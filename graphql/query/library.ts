@@ -50,6 +50,7 @@ export const GET_EXERCISE_BY_ID = gql`
       construction,
       type,
       questions{
+        id,
         question,
         answers{
           id,

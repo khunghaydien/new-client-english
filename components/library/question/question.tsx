@@ -2,9 +2,11 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Answer as IAnswer, Question as IQuestion } from "@/gql/graphql";
 const Questions = ({
+  isCheckAnswer,
   questions,
   onChange,
 }: {
+  isCheckAnswer: boolean;
   questions: IQuestion[];
   onChange: (value: string, id: string) => void;
 }) => {

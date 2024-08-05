@@ -63,7 +63,7 @@ const AvatarUser = ({ avatar }: { avatar: string }) => {
   );
 };
 
-function layout({ children }: { children: ReactNode }) {
+function ModuleLayout({ children }: { children: ReactNode }) {
   const [mouted, setMounted] = useState(false);
   const [logoutUser] = useMutation(LOGOUT_USER);
   const { id, avatar, name, logout } = useUserStore((state) => state);
@@ -77,7 +77,7 @@ function layout({ children }: { children: ReactNode }) {
       logout();
       await logoutUser();
       router.push("/sign-in");
-    } catch (error) { }
+    } catch (error) {}
   };
 
   const handleSearch = useCallback((search: ISearchOutput) => {
@@ -86,14 +86,15 @@ function layout({ children }: { children: ReactNode }) {
       if (relativeId && target) {
         const { type } = scope;
         router.push(
-          `/${target === "Chapter" ? "library" : target.toLocaleLowerCase()
+          `/${
+            target === "Chapter" ? "library" : target.toLocaleLowerCase()
           }/${type.toLocaleLowerCase()}/${relativeId}`
         );
       }
     }
   }, []);
 
-  const handleSetting = () => { };
+  const handleSetting = () => {};
   const handleAccount = () => {
     router.push(`/profile/${id}`);
   };
@@ -167,4 +168,4 @@ function layout({ children }: { children: ReactNode }) {
   );
 }
 
-export default layout;
+export default ModuleLayout;

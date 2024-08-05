@@ -21,7 +21,7 @@ const AvatarUser = ({ avatar }: { avatar: string }) => {
   );
 };
 
-function Profile({ params }: { params: Params }) {
+function ProfilePage({ params }: { params: Params }) {
   const { id } = params;
   const { avatar } = useUserStore((state) => state);
   const setUser = useUserStore((state) => state.setUser);
@@ -84,4 +84,4 @@ function Profile({ params }: { params: Params }) {
   );
 }
 
-export default Profile;
+export default ProfilePage;

@@ -7,7 +7,7 @@ import React, { useEffect, useState } from "react";
 import ExerciseList from "@/components/library/exercise/exercise-list";
 import ExerciseDetail from "@/components/library/exercise/exercise-detail";
 
-function page() {
+function ChapterPage() {
   const { id } = useParams();
   const { data: exercises, loading: exercisesLoading } = useQuery(
     GET_EXERCISES,
@@ -34,7 +34,7 @@ function page() {
             <div>Explanation</div>
           </TabsTrigger>
           <TabsTrigger value="download">
-            <div>Download</div>
+            <div>Downloads</div>
           </TabsTrigger>
         </TabsList>
         <TabsContent value={"exercise"}>
@@ -59,4 +59,4 @@ function page() {
   );
 }
 
-export default page;
+export default ChapterPage;

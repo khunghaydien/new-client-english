@@ -37,40 +37,30 @@ const NoData = () => {
   );
 };
 
-const ChapterPagination = ({
-  pagination,
-}: {
-  pagination: IPagination;
-}) => {
+const ChapterPagination = ({ pagination }: { pagination: IPagination }) => {
   const { pageSize, currentPage, totalPages, totalElements } = pagination;
-  const { paginationDto, setPaginationDto } = useChapterStore(state => state)
+  const { paginationDto, setPaginationDto } = useChapterStore((state) => state);
 
   const skip = useMemo(() => {
     if (paginationDto.page && paginationDto.pageSize)
-      return (paginationDto.page - 1) * paginationDto.pageSize
-  }, [paginationDto])
+      return (paginationDto.page - 1) * paginationDto.pageSize;
+  }, [paginationDto]);
 
-  const onChangePageSize = useCallback(
-    (value: number) => {
-      let page = 1
-      if (skip) {
-        page = Math.floor(skip / value) + 1
-      }
-      setPaginationDto({
-        pageSize: value,
-        page
-      });
-    },
-    []
-  );
-  const onChangePage = useCallback(
-    (value: number) => {
-      setPaginationDto({
-        page: value
-      });
-    },
-    []
-  );
+  const onChangePageSize = useCallback((value: number) => {
+    let page = 1;
+    if (skip) {
+      page = Math.floor(skip / value) + 1;
+    }
+    setPaginationDto({
+      pageSize: value,
+      page,
+    });
+  }, []);
+  const onChangePage = useCallback((value: number) => {
+    setPaginationDto({
+      page: value,
+    });
+  }, []);
   return (
     <>
       <Pagination className="flex justify-end pr-6 gap-6">
@@ -106,9 +96,7 @@ const ChapterPagination = ({
 
         <PaginationContent>
           <PaginationItem>
-            <PaginationPrevious
-              onClick={() => onChangePage(currentPage - 1)}
-            />
+            <PaginationPrevious onClick={() => onChangePage(currentPage - 1)} />
           </PaginationItem>
           {Array.from({ length: totalPages }).map((_, index) => (
             <PaginationItem key={index}>
@@ -133,8 +121,14 @@ const ChapterList = () => {
   const router = useRouter();
   const pathName = usePathname();
   const type = useMemo(() => pathName.split("/")[2], [pathName]);
-  const { chapterFilterDto, paginationDto, orderByDto, setChapterFilterDto, reset } = useChapterStore(state => state)
-  
+  const {
+    chapterFilterDto,
+    paginationDto,
+    orderByDto,
+    setChapterFilterDto,
+    reset,
+  } = useChapterStore((state) => state);
+
   const [pagination, setPagination] = useState<IPagination | null>({
     currentPage: 1,
     pageSize: 10,
@@ -143,7 +137,7 @@ const ChapterList = () => {
   });
 
   useEffect(() => {
-    reset()
+    reset();
     if (type) {
       setChapterFilterDto({ type: type.toUpperCase() });
     }
@@ -157,7 +151,7 @@ const ChapterList = () => {
     variables: {
       chapterFilterDto,
       paginationDto,
-      orderByDto
+      orderByDto,
     },
     skip: !paginationDto.page || !paginationDto.pageSize,
   });
@@ -166,35 +160,33 @@ const ChapterList = () => {
     refetch({
       chapterFilterDto,
       paginationDto,
-      orderByDto
-    })
-  }, [chapterFilterDto, paginationDto, orderByDto])
+      orderByDto,
+    });
+  }, [chapterFilterDto, paginationDto, orderByDto]);
 
-  const handleSearch = useCallback(
-    (search: ISearchOutput) => {
-      if (search.value) {
-        const { scope, relativeId } = search.value;
-        const { type, difficulty, status } = scope;
-        if (relativeId) {
-          router.push(`/library/${type.toLocaleLowerCase()}/${relativeId}`);
-        } else {
-          setChapterFilterDto({
-            difficulty,
-            type,
-            status
-          });
-        }
+  const handleSearch = useCallback((search: ISearchOutput) => {
+    reset();
+    if (search.value) {
+      const { scope, relativeId } = search.value;
+      const { type, difficulty, status } = scope;
+      if (relativeId) {
+        router.push(`/library/${type.toLocaleLowerCase()}/${relativeId}`);
       } else {
         setChapterFilterDto({
-          difficulty: "",
-          type: "",
-          status: "",
-          name: search.label
+          difficulty,
+          type,
+          status,
         });
       }
-    },
-    []
-  );
+    } else {
+      setChapterFilterDto({
+        difficulty: "",
+        type: "",
+        status: "",
+        name: search.label,
+      });
+    }
+  }, []);
 
   useEffect(() => {
     setPagination(data?.getChapters?.pagination);
@@ -234,9 +226,7 @@ const ChapterList = () => {
         </div>
       </ScrollArea>
       {!isEmpty(data?.getChapters?.chapters) && pagination && (
-        <ChapterPagination
-          pagination={pagination}
-        />
+        <ChapterPagination pagination={pagination} />
       )}
     </div>
   );
