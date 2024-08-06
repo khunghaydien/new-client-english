@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { cn, getTextEllipsis, useClickOutside } from "@/lib/utils";
 import _, { isEmpty } from "lodash";
 import { RiArrowDropDownLine } from "react-icons/ri";
-import { IoIosClose } from "react-icons/io";
+import { MdClose } from "react-icons/md";
 import { FaCheck } from "react-icons/fa";
 
 export interface Option {
@@ -128,7 +128,7 @@ const SelectMultipleAutoComplete = ({
             className="px-2 bg-muted rounded-lg text-sm flex gap-1 items-center py-0.5"
           >
             {item.label}
-            <IoIosClose
+            <MdClose
               className="hover:bg-destructive hover:text-white rounded-full cursor-pointer"
               onClick={() => handleRemove(item)}
             />

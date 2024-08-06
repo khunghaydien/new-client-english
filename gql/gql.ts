@@ -22,6 +22,7 @@ const documents = {
     "\n  query GetChapters(\n    $chapterFilterDto: ChapterFilterDto,\n    $paginationDto: PaginationDto,\n    $orderByDto: OrderByDto\n  ) {\n    getChapters(\n      chapterFilterDto: $chapterFilterDto,\n      paginationDto: $paginationDto,\n      orderByDto: $orderByDto\n    ) {\n      chapters{\n        id\n        name\n        viewed\n        createdAt\n        updatedAt\n        status\n        type\n        difficulty\n      }  \n      pagination{\n        currentPage\n        pageSize\n        totalElements\n        totalPages\n      }\n    }\n  }\n": types.GetChaptersDocument,
     "\n query GetExercises(\n    $chapterId: String!,\n  ) {\n    getExercises(chapterId:$chapterId){\n      id,\n    }\n  }\n": types.GetExercisesDocument,
     "\n query GetExercise(\n    $id: String!,\n  ) {\n    getExerciseById(id:$id){\n      id,\n      name,\n      construction,\n      type,\n      questions{\n        id,\n        question,\n        answers{\n          id,\n          label,\n          value\n        }\n      }\n    }\n  }\n": types.GetExerciseDocument,
+    "\n query GetAnswerExercise(\n    $id: String!,\n  ) {\n    getExerciseById(id:$id){\n      id,\n      name,\n      construction,\n      type,\n      questions{\n        id,\n        question,\n        answers{\n          id,\n          value,\n          isCorrect,\n          description\n        }\n      }\n    }\n  }\n": types.GetAnswerExerciseDocument,
     "\n  query GetSearchs(\n    $searchFilterDto: SearchFilterDto,\n    $paginationDto: PaginationDto\n  ) {\n    getSearchs(\n      searchFilterDto: $searchFilterDto,\n      paginationDto: $paginationDto,\n    ) {\n      id\n      name\n      relativeId\n      scope\n      target\n      description\n    }\n  }\n": types.GetSearchsDocument,
 };
 
@@ -75,6 +76,10 @@ export function graphql(source: "\n query GetExercises(\n    $chapterId: String!
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n query GetExercise(\n    $id: String!,\n  ) {\n    getExerciseById(id:$id){\n      id,\n      name,\n      construction,\n      type,\n      questions{\n        id,\n        question,\n        answers{\n          id,\n          label,\n          value\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n query GetExercise(\n    $id: String!,\n  ) {\n    getExerciseById(id:$id){\n      id,\n      name,\n      construction,\n      type,\n      questions{\n        id,\n        question,\n        answers{\n          id,\n          label,\n          value\n        }\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n query GetAnswerExercise(\n    $id: String!,\n  ) {\n    getExerciseById(id:$id){\n      id,\n      name,\n      construction,\n      type,\n      questions{\n        id,\n        question,\n        answers{\n          id,\n          value,\n          isCorrect,\n          description\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n query GetAnswerExercise(\n    $id: String!,\n  ) {\n    getExerciseById(id:$id){\n      id,\n      name,\n      construction,\n      type,\n      questions{\n        id,\n        question,\n        answers{\n          id,\n          value,\n          isCorrect,\n          description\n        }\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

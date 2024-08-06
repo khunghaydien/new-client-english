@@ -1,22 +1,32 @@
-import { Button } from "@/components/ui/button";
-import { GET_EXERCISE_BY_ID } from "@/graphql/query/library";
-import { useQuery } from "@apollo/client";
-import { isEmpty } from "lodash";
-import Questions from "../question/question";
-import QuestionPalette from "../question/question-palette";
-import { useCallback, useMemo, useState } from "react";
+import {
+  GET_ANSWER_EXERCISE_BY_ID,
+  GET_EXERCISE_BY_ID,
+} from "@/graphql/query/library";
+import { useLazyQuery, useQuery } from "@apollo/client";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useFormik } from "formik";
 import { Question as IQuestion } from "@/gql/graphql";
+import ConditionalRender from "@/components/common/conditional-render";
+import { AnsweringQuestion, CheckingQuestion } from "../question/question";
+
 const ExerciseDetail = ({ exerciseId }: { exerciseId: string }) => {
-  const { data: exercise } = useQuery(GET_EXERCISE_BY_ID, {
-    skip: !exerciseId,
-    variables: { id: exerciseId },
-  });
   const [isCheckAnswer, setIsCheckAnswer] = useState<boolean>(false);
 
+  useEffect(() => {
+    setIsCheckAnswer(false);
+  }, [exerciseId]);
+
+  const { data: answeringExercise } = useQuery(GET_EXERCISE_BY_ID, {
+    variables: { id: exerciseId },
+  });
+
+  const [loadExerciseAnswer, { data: checkingExercise }] = useLazyQuery(
+    GET_ANSWER_EXERCISE_BY_ID
+  );
+
   const initialValues = useMemo(() => {
-    if (exercise?.getExerciseById?.questions) {
-      return exercise.getExerciseById.questions.reduce(
+    if (answeringExercise?.getExerciseById?.questions) {
+      return answeringExercise.getExerciseById.questions.reduce(
         (acc: Record<string, string>, question: IQuestion) => {
           acc[question.id] = "";
           return acc;
@@ -25,7 +35,7 @@ const ExerciseDetail = ({ exerciseId }: { exerciseId: string }) => {
       );
     }
     return {};
-  }, [exercise?.getExerciseById?.questions]);
+  }, [answeringExercise?.getExerciseById?.questions]);
 
   const formik = useFormik({
     initialValues,
@@ -40,31 +50,32 @@ const ExerciseDetail = ({ exerciseId }: { exerciseId: string }) => {
 
   const handleCheckAnswer = () => {
     setIsCheckAnswer(true);
+    loadExerciseAnswer({ variables: { id: exerciseId } });
+  };
+
+  const onTryAgain = () => {
+    setIsCheckAnswer(false);
   };
 
   return (
     <div className="pt-6 flex flex-col justify-between gap-6">
-      <form>
-        <Questions
-          isCheckAnswer={isCheckAnswer}
-          questions={exercise?.getExerciseById?.questions || []}
-          onChange={handleAnswer}
-        />
-        <div className="flex justify-between">
-          <QuestionPalette
-            questions={exercise?.getExerciseById?.questions || []}
-            onClick={() => {}}
+      <ConditionalRender
+        conditional={!isCheckAnswer}
+        fallback={
+          <CheckingQuestion
+            questions={checkingExercise?.getExerciseById?.questions}
+            questionAnswers={values}
+            onTryAgain={onTryAgain}
           />
-          {!isEmpty(exercise?.getExerciseById?.questions) && (
-            <div className="flex gap-3">
-              <Button variant={"blue"} onClick={handleCheckAnswer}>
-                Check Answer
-              </Button>
-              <Button type="submit">Submit</Button>
-            </div>
-          )}
-        </div>
-      </form>
+        }
+      >
+        <AnsweringQuestion
+          questionAnswers={values}
+          questions={answeringExercise?.getExerciseById?.questions || []}
+          onChange={handleAnswer}
+          onCheckAnswer={handleCheckAnswer}
+        />
+      </ConditionalRender>
     </div>
   );
 };

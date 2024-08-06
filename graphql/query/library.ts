@@ -61,3 +61,27 @@ export const GET_EXERCISE_BY_ID = gql`
     }
   }
 `
+
+export const GET_ANSWER_EXERCISE_BY_ID = gql`
+ query GetAnswerExercise(
+    $id: String!,
+  ) {
+    getExerciseById(id:$id){
+      id,
+      name,
+      construction,
+      type,
+      questions{
+        id,
+        question,
+        answers{
+          id,
+          label,
+          value,
+          isCorrect,
+          description
+        }
+      }
+    }
+  }
+`

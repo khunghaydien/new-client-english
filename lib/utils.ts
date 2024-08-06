@@ -3,7 +3,6 @@ import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { useEffect } from "react"
 import { MAX_ELLIPSIS } from "@/const/app"
-import { CATEGORIES, ECHAPTER, ECHAPTERSTATUS, EDIFFICULTY, EEXERCISE } from "@/const/library"
 import { PixelCrop } from "react-image-crop"
 
 export function cn(...inputs: ClassValue[]) {
@@ -60,6 +59,14 @@ export const scrollToFirstErrorMessage = () => {
   }
 }
 
+export const scrollToQuestionById = (id: string) => {
+  const element = document.querySelector(`#question-${id}`) as HTMLElement;
+  if (element) {
+    element.scrollIntoView({
+      behavior: 'smooth',
+    });
+  }
+};
 export const getFirstNSegments = (url: string, rank: number = 2): string => {
   const parts = url.split("/");
   if (parts.length > rank) {

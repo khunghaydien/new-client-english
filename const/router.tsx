@@ -64,3 +64,24 @@ export const libraryRouter: INavSidebar[] = [
     icon: <GiCardRandom />,
   },
 ];
+
+export const chapterRouter: INavSidebar[] = [
+  {
+    label: "Instruction",
+    href: "/chapter/instruction",
+    children: [],
+    icon: <TbTextGrammar />,
+  },
+  {
+    label: "Exercise",
+    href: "/chapter/exercise",
+    children: [],
+    icon: <FaTextWidth />,
+  },
+  {
+    label: "Communication",
+    href: "/chapter/communication",
+    children: [],
+    icon: <GrAssistListening />,
+  },
+];
