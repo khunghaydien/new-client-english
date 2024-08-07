@@ -13,7 +13,6 @@ import { useRouter } from "next/navigation";
 import { LOGIN_USER } from "@/graphql/mutation/auth";
 import { scrollToFirstErrorMessage } from "@/lib/utils";
 import authValidate from "./formik";
-import { useUserStore } from "@/stores/userStore";
 
 const initialValues = {
   email: "",
@@ -22,7 +21,6 @@ const initialValues = {
 
 function PageComponent() {
   const { loginValidate } = authValidate();
-  const setUser = useUserStore((state) => state.setUser);
   const router = useRouter();
   const formik = useFormik({
     initialValues,
@@ -45,8 +43,7 @@ function PageComponent() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const handleLogin = async () => {
     try {
-      const res = await loginUser();
-      setUser(res.data.login.user);
+      await loginUser();
       router.push("/");
     } catch (error) {}
   };

@@ -15,11 +15,13 @@ export const AnsweringQuestion = ({
   onChange,
   onCheckAnswer,
   questionAnswers,
+  loading,
 }: {
   questions: IQuestion[];
   onChange: (value: string, id: string) => void;
   onCheckAnswer: () => void;
   questionAnswers: Record<string, string>;
+  loading: boolean;
 }) => {
   return (
     <>
@@ -39,6 +41,7 @@ export const AnsweringQuestion = ({
       </ScrollArea>
       <div className="flex justify-between">
         <QuestionPalette
+          loading={loading}
           isChecking={false}
           questions={questions}
           onClick={(id: string) => scrollToQuestionById(id)}
@@ -49,7 +52,6 @@ export const AnsweringQuestion = ({
             <Button variant={"blue"} onClick={onCheckAnswer}>
               Check Answer
             </Button>
-            <Button type="submit">Submit</Button>
           </div>
         )}
       </div>
@@ -175,10 +177,12 @@ export const CheckingQuestion = ({
   questions,
   questionAnswers,
   onTryAgain,
+  loading,
 }: {
   questions: IQuestion[];
   questionAnswers: Record<string, string>;
   onTryAgain: () => void;
+  loading: boolean;
 }) => {
   return (
     <>
@@ -197,6 +201,7 @@ export const CheckingQuestion = ({
       </ScrollArea>
       <div className="flex justify-between">
         <QuestionPalette
+          loading={loading}
           isChecking
           questions={questions}
           onClick={(id: string) => scrollToQuestionById(id)}
@@ -207,7 +212,6 @@ export const CheckingQuestion = ({
             <Button variant={"blue"} onClick={onTryAgain}>
               Try again
             </Button>
-            <Button type="submit">Next</Button>
           </div>
         )}
       </div>

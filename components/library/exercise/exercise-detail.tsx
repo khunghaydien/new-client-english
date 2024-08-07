@@ -11,18 +11,24 @@ import { AnsweringQuestion, CheckingQuestion } from "../question/question";
 
 const ExerciseDetail = ({ exerciseId }: { exerciseId: string }) => {
   const [isCheckAnswer, setIsCheckAnswer] = useState<boolean>(false);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     setIsCheckAnswer(false);
   }, [exerciseId]);
 
-  const { data: answeringExercise } = useQuery(GET_EXERCISE_BY_ID, {
-    variables: { id: exerciseId },
-  });
+  const { data: answeringExercise, loading: answeringExerciseLoading } =
+    useQuery(GET_EXERCISE_BY_ID, {
+      variables: { id: exerciseId },
+    });
 
-  const [loadExerciseAnswer, { data: checkingExercise }] = useLazyQuery(
-    GET_ANSWER_EXERCISE_BY_ID
-  );
+  const [
+    loadExerciseAnswer,
+    { data: checkingExercise, loading: checkingExerciseLoading },
+  ] = useLazyQuery(GET_ANSWER_EXERCISE_BY_ID);
 
   const initialValues = useMemo(() => {
     if (answeringExercise?.getExerciseById?.questions) {
@@ -66,6 +72,7 @@ const ExerciseDetail = ({ exerciseId }: { exerciseId: string }) => {
             questions={checkingExercise?.getExerciseById?.questions}
             questionAnswers={values}
             onTryAgain={onTryAgain}
+            loading={!mounted || answeringExerciseLoading}
           />
         }
       >
@@ -74,6 +81,7 @@ const ExerciseDetail = ({ exerciseId }: { exerciseId: string }) => {
           questions={answeringExercise?.getExerciseById?.questions || []}
           onChange={handleAnswer}
           onCheckAnswer={handleCheckAnswer}
+          loading={!mounted || checkingExerciseLoading}
         />
       </ConditionalRender>
     </div>

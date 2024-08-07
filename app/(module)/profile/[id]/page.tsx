@@ -3,7 +3,6 @@ import ConditionalRender from "@/components/common/conditional-render";
 import ModalUploadImage from "@/components/common/modal-upload-image";
 import { Skeleton } from "@/components/ui/skeleton";
 import { UPDATE_USER } from "@/graphql/mutation/user";
-import { useUserStore } from "@/stores/userStore";
 import { useMutation } from "@apollo/client";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import React, { useCallback, useEffect, useState } from "react";
@@ -23,8 +22,6 @@ const AvatarUser = ({ avatar }: { avatar: string }) => {
 
 function ProfilePage({ params }: { params: Params }) {
   const { id } = params;
-  const { avatar } = useUserStore((state) => state);
-  const setUser = useUserStore((state) => state.setUser);
   const [updateUser, { loading }] = useMutation(UPDATE_USER);
   const [mounted, setMounted] = useState(false);
   const [newAvatar, setNewAvatar] = useState("");
@@ -45,7 +42,6 @@ function ProfilePage({ params }: { params: Params }) {
           });
           if (res.data.updateUser) {
             setNewAvatar(imgSrc);
-            setUser(res?.data?.updateUser);
           }
         }
       } catch (error) {
@@ -63,7 +59,7 @@ function ProfilePage({ params }: { params: Params }) {
           conditional={mounted}
           fallback={<Skeleton className="w-[150px] h-[150px] rounded-full" />}
         >
-          <AvatarUser avatar={newAvatar ? newAvatar : avatar ?? ""} />
+          <AvatarUser avatar={newAvatar ? newAvatar : "avatar" ?? ""} />
         </ConditionalRender>
         <button
           className="absolute -bottom-3 left-0 right-0 m-auto w-fit p-[.35rem] rounded-full bg-gray-800 hover:bg-gray-700 border border-gray-600"

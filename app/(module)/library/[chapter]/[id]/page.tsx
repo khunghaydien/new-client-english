@@ -4,8 +4,8 @@ import { GET_EXERCISES } from "@/graphql/query/library";
 import { useQuery } from "@apollo/client";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import ExerciseList from "@/components/library/exercise/exercise-list";
 import ExerciseDetail from "@/components/library/exercise/exercise-detail";
+import { ExercisePalette } from "@/components/library/exercise/exercise-palette";
 
 function ChapterPage() {
   const { id } = useParams();
@@ -38,7 +38,7 @@ function ChapterPage() {
           </TabsTrigger>
         </TabsList>
         <TabsContent value={"exercise"}>
-          <ExerciseList
+          <ExercisePalette
             exercises={exercises?.getExercises ?? []}
             loading={exercisesLoading}
             exerciseId={exerciseId}

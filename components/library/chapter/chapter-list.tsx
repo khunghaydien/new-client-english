@@ -13,8 +13,6 @@ import {
   Pagination,
   PaginationContent,
   PaginationItem,
-  PaginationNext,
-  PaginationPrevious,
 } from "@/components/ui/pagination";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,8 +23,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import ChapterItem from "./chapter-item";
 import { useChapterStore } from "@/stores/chapterStore";
-
-const pageSizes = [5, 10, 15, 20, 50, 100];
+import { CarouselPalette } from "@/components/common/carousel-palette";
+import { PAGE_SIZES } from "@/const/app";
 
 const NoData = () => {
   return (
@@ -40,7 +38,6 @@ const NoData = () => {
 const ChapterPagination = ({ pagination }: { pagination: IPagination }) => {
   const { pageSize, currentPage, totalPages, totalElements } = pagination;
   const { paginationDto, setPaginationDto } = useChapterStore((state) => state);
-
   const skip = useMemo(() => {
     if (paginationDto.page && paginationDto.pageSize)
       return (paginationDto.page - 1) * paginationDto.pageSize;
@@ -56,6 +53,7 @@ const ChapterPagination = ({ pagination }: { pagination: IPagination }) => {
       page,
     });
   }, []);
+
   const onChangePage = useCallback((value: number) => {
     setPaginationDto({
       page: value,
@@ -72,7 +70,7 @@ const ChapterPagination = ({ pagination }: { pagination: IPagination }) => {
                 {pageSize}
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                {pageSizes.map((pageSize, index) => (
+                {PAGE_SIZES.map((pageSize, index) => (
                   <DropdownMenuItem
                     key={index}
                     onClick={() => onChangePageSize(pageSize)}
@@ -95,22 +93,28 @@ const ChapterPagination = ({ pagination }: { pagination: IPagination }) => {
         </PaginationContent>
 
         <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious onClick={() => onChangePage(currentPage - 1)} />
-          </PaginationItem>
-          {Array.from({ length: totalPages }).map((_, index) => (
-            <PaginationItem key={index}>
-              <Button
-                variant={currentPage === index + 1 ? "default" : "ghost"}
-                onClick={() => onChangePage(index + 1)}
-              >
-                {index + 1}
-              </Button>
-            </PaginationItem>
-          ))}
-          <PaginationItem>
-            <PaginationNext onClick={() => onChangePage(currentPage + 1)} />
-          </PaginationItem>
+          <CarouselPalette
+            items={
+              Array.from({ length: totalPages }).map(
+                (_, index) => index + 1
+              ) as number[]
+            }
+            activeIndex={currentPage}
+            renderButton={(item, index, chunkIndex, chunkSize) => {
+              return (
+                <Button
+                  className="w-[45px]"
+                  variant={
+                    currentPage === chunkIndex * chunkSize + index + 1
+                      ? "default"
+                      : "outline"
+                  }
+                  onClick={() => onChangePage(item)}
+                  key={item}
+                >{`${chunkIndex * chunkSize + index + 1}`}</Button>
+              );
+            }}
+          />
         </PaginationContent>
       </Pagination>
     </>

@@ -119,3 +119,44 @@ export const setCanvasPreview = (
 
   ctx.restore();
 };
+
+const findClosestDivisorOrAdjust = (num: number) => {
+  let closestDivisor = null;
+
+  // Kiểm tra các số từ 3 đến 10 để tìm số chia hết gần nhất với 5
+  for (let i = 3; i <= 10; i++) {
+    if (num % i === 0) {
+      if (closestDivisor === null || Math.abs(i - 5) < Math.abs(closestDivisor - 5)) {
+        closestDivisor = i;
+      }
+    }
+  }
+
+  if (closestDivisor !== null) {
+    return closestDivisor;
+  }
+
+  // Nếu không có số nào chia hết, tìm số nguyên nhỏ nhất cần cộng vào
+  let adjustment = 1;
+  while (true) {
+    for (let i = 3; i <= 10; i++) {
+      if ((num + adjustment) % i === 0) {
+        return num + adjustment;
+      }
+    }
+    adjustment++;
+  }
+};
+
+// Utility function to chunk the array
+export const convertToChunks = (chunks: unknown[], maxChunkSize: number) => {
+  const chunkSize = chunks.length > maxChunkSize ? findClosestDivisorOrAdjust(chunks.length) : maxChunkSize
+  const result = [];
+  for (let i = 0; i < chunks?.length; i += chunkSize) {
+    result.push(chunks?.slice(i, i + chunkSize));
+  }
+  return {
+    chunkList: result,
+    chunkSize
+  };
+};

@@ -10,8 +10,7 @@ import {
 import InputSearch, { ISearchOutput } from "@/components/ui/input-search";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LOGOUT_USER } from "@/graphql/mutation/auth";
-import { useUserStore } from "@/stores/userStore";
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, {
@@ -26,7 +25,9 @@ import { MdNotifications } from "react-icons/md";
 import { MdLogout } from "react-icons/md";
 import { IoMdSettings } from "react-icons/io";
 import { FaBattleNet } from "react-icons/fa";
-
+import ThemeSwitcher from "@/components/common/theme-switcher";
+import { GET_PROFILE } from "@/graphql/query/user";
+import { useProfileStore } from "@/stores/profileStore";
 const Icon = ({ children }: { children: ReactNode }) => {
   return (
     <div className="w-[40px] h-[40px] rounded-full bg-muted hover:bg-muted/70 flex items-center justify-center">
@@ -66,7 +67,7 @@ const AvatarUser = ({ avatar }: { avatar: string }) => {
 function ModuleLayout({ children }: { children: ReactNode }) {
   const [mouted, setMounted] = useState(false);
   const [logoutUser] = useMutation(LOGOUT_USER);
-  const { id, avatar, name, logout } = useUserStore((state) => state);
+  const { user, setUser } = useProfileStore((state) => state);
   const router = useRouter();
   useEffect(() => {
     setMounted(true);
@@ -74,11 +75,16 @@ function ModuleLayout({ children }: { children: ReactNode }) {
 
   const handleLogout = async () => {
     try {
-      logout();
       await logoutUser();
       router.push("/sign-in");
     } catch (error) {}
   };
+
+  const { data, loading } = useQuery(GET_PROFILE);
+
+  useEffect(() => {
+    if (data?.getProfile?.id) setUser(data?.getProfile);
+  }, [data?.getProfile]);
 
   const handleSearch = useCallback((search: ISearchOutput) => {
     if (search.value) {
@@ -96,7 +102,7 @@ function ModuleLayout({ children }: { children: ReactNode }) {
 
   const handleSetting = () => {};
   const handleAccount = () => {
-    router.push(`/profile/${id}`);
+    router.push(`/profile/${user?.id}`);
   };
   return (
     <div className="">
@@ -106,8 +112,9 @@ function ModuleLayout({ children }: { children: ReactNode }) {
           <InputSearch className="max-w-[300px]" onSearch={handleSearch} />
         </div>
         <div className="flex items-center gap-2">
-          {mouted ? (
+          {mouted && !loading ? (
             <>
+              <ThemeSwitcher />
               <Icon>
                 <FaBattleNet className="w-[20px] h-[20px]" />
               </Icon>
@@ -115,18 +122,18 @@ function ModuleLayout({ children }: { children: ReactNode }) {
                 <MdNotifications className="w-[20px] h-[20px]" />
               </Icon>
               <ConditionalRender
-                conditional={Boolean(id)}
+                conditional={Boolean(user?.id)}
                 fallback={<UnauthorizedUser />}
               >
                 <DropdownMenu>
                   <DropdownMenuTrigger className="outline-none">
-                    <AvatarUser avatar={avatar ?? ""} />
+                    <AvatarUser avatar={user?.avatar ?? ""} />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
                     <DropdownMenuItem onClick={handleAccount}>
                       <div className="flex items-center gap-2">
-                        <AvatarUser avatar={avatar ?? ""} />
-                        <div>{name}</div>
+                        <AvatarUser avatar={user?.avatar ?? ""} />
+                        <div>{user?.name}</div>
                       </div>
                     </DropdownMenuItem>
                     <DropdownMenuItem
