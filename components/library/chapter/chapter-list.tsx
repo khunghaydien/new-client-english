@@ -1,7 +1,13 @@
 "use client";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { Chapter, Pagination as IPagination } from "@/gql/graphql";
+import { Chapter as IChapter, Pagination as IPagination } from "@/gql/graphql";
 import { useQuery } from "@apollo/client";
 import { GET_CHAPTERS } from "@/graphql/query/library";
 import { isEmpty } from "lodash";
@@ -26,7 +32,7 @@ import { useChapterStore } from "@/stores/chapterStore";
 import { CarouselPalette } from "@/components/common/carousel-palette";
 import { PAGE_SIZES } from "@/const/app";
 
-const NoData = () => {
+export const NoData = () => {
   return (
     <div className="flex flex-col w-full h-full min-h-[500px] gap-10 items-center justify-center text-muted-foreground font-bold">
       <TbDatabaseOff className="w-20 h-20 " />
@@ -35,7 +41,14 @@ const NoData = () => {
   );
 };
 
-const ChapterPagination = ({ pagination }: { pagination: IPagination }) => {
+export const ChapterPagination = ({
+  pagination,
+  chapters,
+}: {
+  pagination: IPagination | null;
+  chapters: IChapter;
+}) => {
+  if (!pagination || isEmpty(chapters)) return null;
   const { pageSize, currentPage, totalPages, totalElements } = pagination;
   const { paginationDto, setPaginationDto } = useChapterStore((state) => state);
   const skip = useMemo(() => {
@@ -59,6 +72,7 @@ const ChapterPagination = ({ pagination }: { pagination: IPagination }) => {
       page: value,
     });
   }, []);
+
   return (
     <>
       <Pagination className="flex justify-end pr-6 gap-6">
@@ -121,7 +135,38 @@ const ChapterPagination = ({ pagination }: { pagination: IPagination }) => {
   );
 };
 
-const ChapterList = () => {
+export const ChapterList = ({
+  loading,
+  chapters,
+  handleClick,
+}: {
+  loading: boolean;
+  chapters: IChapter[];
+  handleClick: (id: string, type: string) => void;
+}) => {
+  return (
+    <ScrollArea style={{ height: "calc(100vh - 250px)" }}>
+      <div className="flex flex-col gap-3">
+        {loading ? (
+          <ListLoading height={100} quantity={5} direction="vertical" />
+        ) : (
+          <>
+            {isEmpty(chapters) && <NoData />}
+            {chapters?.map((chapter: IChapter, index: number) => (
+              <ChapterItem
+                key={index}
+                chapter={chapter}
+                onClick={handleClick}
+              />
+            ))}
+          </>
+        )}
+      </div>
+    </ScrollArea>
+  );
+};
+
+const WrappedChapterList = () => {
   const router = useRouter();
   const pathName = usePathname();
   const type = useMemo(() => pathName.split("/")[2], [pathName]);
@@ -209,31 +254,17 @@ const ChapterList = () => {
           <InputSearch scope={scope} onSearch={handleSearch} target="Chapter" />
         </div>
       </div>
-      <ScrollArea style={{ height: "calc(100vh - 250px)" }}>
-        <div className="flex flex-col gap-3 pr-6">
-          {loading ? (
-            <ListLoading height={100} quantity={5} direction="vertical" />
-          ) : (
-            <>
-              {isEmpty(data?.getChapters?.chapters) && <NoData />}
-              {data?.getChapters?.chapters?.map(
-                (chapter: Chapter, index: number) => (
-                  <ChapterItem
-                    key={index}
-                    chapter={chapter}
-                    onClick={handleClick}
-                  />
-                )
-              )}
-            </>
-          )}
-        </div>
-      </ScrollArea>
-      {!isEmpty(data?.getChapters?.chapters) && pagination && (
-        <ChapterPagination pagination={pagination} />
-      )}
+      <ChapterList
+        loading={loading}
+        chapters={data?.getChapters?.chapters}
+        handleClick={handleClick}
+      />
+      <ChapterPagination
+        chapters={data?.getChapters?.chapters}
+        pagination={pagination}
+      />
     </div>
   );
 };
 
-export default ChapterList;
+export default WrappedChapterList;

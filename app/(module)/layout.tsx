@@ -30,7 +30,7 @@ import { GET_PROFILE } from "@/graphql/query/user";
 import { useProfileStore } from "@/stores/profileStore";
 const Icon = ({ children }: { children: ReactNode }) => {
   return (
-    <div className="w-[40px] h-[40px] rounded-full bg-muted hover:bg-muted/70 flex items-center justify-center">
+    <div className="w-[40px] h-[40px] rounded-full bg-muted-foreground/10 hover:bg-muted-foreground/20 flex items-center justify-center cursor-pointer">
       {children}
     </div>
   );
@@ -54,7 +54,7 @@ const UnauthorizedUser = () => {
 
 const AvatarUser = ({ avatar }: { avatar: string }) => {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2 bg-muted-foreground/10 hover:bg-muted-foreground/20 rounded-full">
       <img
         src={avatar}
         alt="Avatar"
@@ -105,8 +105,8 @@ function ModuleLayout({ children }: { children: ReactNode }) {
     router.push(`/profile/${user?.id}`);
   };
   return (
-    <div className="">
-      <nav className="w-full flex items-center justify-between px-12 py-3 text-sm border-b-[0.5px] border-muted-foreground bg-muted/30">
+    <div className="bg-muted-foreground/10">
+      <nav className="w-full flex items-center justify-between px-12 py-3 text-sm border-b-[0.5px] border-muted-foreground">
         <div className="flex gap-3">
           <Logo />
           <InputSearch className="max-w-[300px]" onSearch={handleSearch} />
@@ -114,7 +114,7 @@ function ModuleLayout({ children }: { children: ReactNode }) {
         <div className="flex items-center gap-2">
           {mouted && !loading ? (
             <>
-              <ThemeSwitcher />
+              {/* <ThemeSwitcher /> */}
               <Icon>
                 <FaBattleNet className="w-[20px] h-[20px]" />
               </Icon>

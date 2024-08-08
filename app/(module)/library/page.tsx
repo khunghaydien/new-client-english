@@ -1,15 +1,7 @@
-import { WholeLoading } from "@/components/common/loading";
-import React, { lazy, Suspense } from "react";
-const ChapterList = lazy(
-  () => import("@/components/library/chapter/chapter-list")
-);
-
+import WrappedChapterList from "@/components/library/chapter/chapter-list";
+import React from "react";
 function page() {
-  return (
-    <Suspense fallback={<WholeLoading />}>
-      <ChapterList />
-    </Suspense>
-  );
+  return <WrappedChapterList />;
 }
 
 export default page;

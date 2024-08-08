@@ -7,7 +7,6 @@ import { useMutation } from "@apollo/client";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import React, { useCallback, useEffect, useState } from "react";
 import { MdEdit } from "react-icons/md";
-
 const AvatarUser = ({ avatar }: { avatar: string }) => {
   return (
     <div className="flex items-center gap-2">
@@ -62,7 +61,7 @@ function ProfilePage({ params }: { params: Params }) {
           <AvatarUser avatar={newAvatar ? newAvatar : "avatar" ?? ""} />
         </ConditionalRender>
         <button
-          className="absolute -bottom-3 left-0 right-0 m-auto w-fit p-[.35rem] rounded-full bg-gray-800 hover:bg-gray-700 border border-gray-600"
+          className="absolute -bottom-3 left-10 right-0 m-auto w-fit p-[.35rem] rounded-full border bg-muted-foreground/10 hover:bg-muted-foreground/30"
           title="Change photo"
           onClick={() => setOpen(true)}
         >

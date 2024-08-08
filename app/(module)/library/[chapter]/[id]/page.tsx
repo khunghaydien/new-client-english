@@ -25,7 +25,7 @@ function ChapterPage() {
 
   return (
     <Tabs defaultValue={"exercise"}>
-      <div className="flex justify-between">
+      <div className="flex justify-between items-end">
         <TabsList>
           <TabsTrigger value="exercise">
             <div>Exercises</div>

@@ -5,7 +5,7 @@ import { Answer as IAnswer, Question as IQuestion } from "@/gql/graphql";
 import clsx from "clsx";
 import { useMemo } from "react";
 import { MdClose } from "react-icons/md";
-import { isEmpty } from "lodash";
+import { cloneDeep, isEmpty } from "lodash";
 import { Button } from "@/components/ui/button";
 import { scrollToQuestionById } from "@/lib/utils";
 import { QuestionPalette } from "./question-palette";
@@ -87,7 +87,7 @@ export const QuestionItem = ({
       <div className="flex items-center gap-2">
         <div
           className={clsx(
-            "flex items-center justify-center w-6 h-6 border rounded-full text-muted-foreground"
+            "flex items-center justify-center w-6 h-6 border rounded-full bg-muted-foreground/10 border-muted-foreground"
           )}
         >
           {number}
@@ -184,9 +184,25 @@ export const CheckingQuestion = ({
   onTryAgain: () => void;
   loading: boolean;
 }) => {
+  const checkingQuestion = cloneDeep(questions);
+  const correctAnswers = useMemo(() => {
+    return checkingQuestion?.filter(
+      ({ answers, id }: IQuestion) =>
+        answers?.find((answer: IAnswer) => answer?.isCorrect)?.value ===
+        questionAnswers[id]
+    );
+  }, [checkingQuestion]);
   return (
     <>
       <ScrollArea style={{ height: "calc(100vh - 250px)" }}>
+        <div className="mb-6">
+          <p>You have completed this test.</p>
+          <p>{`Correct answers: ${correctAnswers?.length}/${checkingQuestion?.length}.`}</p>
+          <p>{`Your score is: ${Math.ceil(
+            (correctAnswers?.length / checkingQuestion?.length) * 100
+          )}%.`}</p>
+          <p>Check your answers:</p>
+        </div>
         <div className="flex flex-col gap-6">
           {questions?.map((question: IQuestion, index: number) => (
             <QuestionItem

@@ -16,7 +16,7 @@ const ChapterItem = ({ chapter, onClick }: IChapterCard) => {
   return (
     <div
       className={
-        "cursor-pointer p-3 rounded-lg hover:border-primary bg-muted border-b-2 border-muted"
+        "cursor-pointer p-3 rounded-lg hover:bg-muted-foreground/20 bg-muted-foreground/10 "
       }
       onClick={() => onClick(id, type)}
     >

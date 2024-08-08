@@ -150,7 +150,7 @@ const findClosestDivisorOrAdjust = (num: number) => {
 
 // Utility function to chunk the array
 export const convertToChunks = (chunks: unknown[], maxChunkSize: number) => {
-  const chunkSize = chunks.length > maxChunkSize ? findClosestDivisorOrAdjust(chunks.length) : maxChunkSize
+  const chunkSize = chunks?.length > maxChunkSize ? findClosestDivisorOrAdjust(chunks?.length) : maxChunkSize
   const result = [];
   for (let i = 0; i < chunks?.length; i += chunkSize) {
     result.push(chunks?.slice(i, i + chunkSize));

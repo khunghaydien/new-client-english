@@ -43,10 +43,10 @@ const NestedAccordion = ({
           >
             {isEmpty(children) && (
               <Link
-                className={`rounded-lg  py-3 px-2 hover:bg-muted cursor-pointer text-sm font-bold flex gap-3 items-center ${
+                className={`rounded-lg py-3 px-2 cursor-pointer text-sm font-bold flex gap-3 items-center ${
                   pathname.includes(href)
                     ? "bg-primary hover:bg-primary text-white"
-                    : ""
+                    : "hover:bg-muted-foreground/20"
                 }`}
                 href={href}
               >
@@ -56,7 +56,7 @@ const NestedAccordion = ({
             )}
             {!isEmpty(children) && (
               <>
-                <AccordionTrigger className="rounded-lg py-3 px-2 hover:bg-muted data-[state=open]:bg-secondary text-sm font-bold">
+                <AccordionTrigger className="rounded-lg py-3 px-2 hover:bg-muted-foreground/20 data-[state=open]:bg-muted-foreground/20 text-sm font-bold">
                   {label}
                 </AccordionTrigger>
                 <AccordionContent>

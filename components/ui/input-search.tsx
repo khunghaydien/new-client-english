@@ -36,7 +36,7 @@ const InputSearch = ({ scope, onSearch, className, target }: IInputSearch) => {
         ...(scope &&
           !isEmpty(Object.keys(scope)) && { scope: JSON.stringify(scope) }),
       },
-    }
+    },
   });
 
   const debounceInput = useCallback(
@@ -75,7 +75,7 @@ const InputSearch = ({ scope, onSearch, className, target }: IInputSearch) => {
             {relativeId && (
               <>
                 <div>-</div>
-                <div className="text-blue-400">
+                <div className="text-primary">
                   {target.toLocaleLowerCase()}.
                   {name.trim().split(" ").join("-")}
                 </div>
@@ -87,11 +87,16 @@ const InputSearch = ({ scope, onSearch, className, target }: IInputSearch) => {
               {description && <div>{description}</div>}
               {!isEmpty(scope) && (
                 <div className="flex items-center justify-center gap-2">
-                  {Object.values(scope as Record<string, string>).map((item: string, index: number) => (
-                    <div key={index} className="px-2 rounded-lg bg-primary/20">
-                      {item.toLocaleLowerCase()}
-                    </div>
-                  ))}
+                  {Object.values(scope as Record<string, string>).map(
+                    (item: string, index: number) => (
+                      <div
+                        key={index}
+                        className="px-2 rounded-lg bg-muted-foreground/20"
+                      >
+                        {item.toLocaleLowerCase()}
+                      </div>
+                    )
+                  )}
                 </div>
               )}
             </div>
@@ -145,12 +150,12 @@ const InputSearch = ({ scope, onSearch, className, target }: IInputSearch) => {
         onClick={() => setShowSearchEngine(true)}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
-        className={"w-full  bg-muted h-[40px]"}
+        className={"w-full bg-background h-[40px]"}
         placeholder={"Search..."}
         ref={inputRef}
       />
       {showSearchEngine && !isEmpty(data?.getSearchs) && (
-        <ul className="min-w-[500px] animate-in fade-in-0 zoom-in-95 absolute top-11 z-10 w-full rounded-lg outline-none bg-muted p-2 shadow-lg border-b-2 border-primary">
+        <ul className="min-w-[500px] animate-in fade-in-0 zoom-in-95 absolute top-11 z-10 w-full rounded-lg outline-none bg-background p-2 shadow-lg">
           {loading ? (
             <div className="flex items-center justify-center">
               <ImSpinner2 className="animate-spin w-8 h-8 text-primary" />
@@ -161,8 +166,9 @@ const InputSearch = ({ scope, onSearch, className, target }: IInputSearch) => {
                 <li
                   key={search.id}
                   onClick={() => handleClickSearchEngine(search)}
-                  className={`cursor-pointer hover:bg-background px-3 py-1 rounded-lg  ${index === activeIndex ? "bg-background" : ""
-                    }`}
+                  className={`cursor-pointer hover:bg-muted-foreground/20 px-3 py-2 rounded-lg  ${
+                    index === activeIndex ? "bg-muted-foreground/20" : ""
+                  }`}
                 >
                   {formatLabel(search)}
                 </li>
