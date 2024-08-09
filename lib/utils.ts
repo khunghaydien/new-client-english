@@ -1,7 +1,7 @@
 'use client'
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { MAX_ELLIPSIS } from "@/const/app"
 import { PixelCrop } from "react-image-crop"
 
@@ -28,6 +28,30 @@ export const useClickOutside = (
     }
   }, [ref, handler])
 }
+
+export const useDistanceToBottom = (ref: React.MutableRefObject<null | HTMLDivElement>) => {
+  const [distanceToBottom, setDistanceToBottom] = useState(0);
+
+  useEffect(() => {
+    const calculateDistanceToBottom = () => {
+      if (ref.current) {
+        const rect = ref.current.getBoundingClientRect();
+        const distance = window.innerHeight - rect.bottom;
+        setDistanceToBottom(distance);
+      }
+    };
+
+    calculateDistanceToBottom();
+    window.addEventListener('resize', calculateDistanceToBottom);
+
+    return () => {
+      window.removeEventListener('resize', calculateDistanceToBottom);
+    };
+  }, [ref]);
+
+  return distanceToBottom;
+};
+
 
 export const getTextEllipsis = (
   text: any,

@@ -1,8 +1,7 @@
 import * as yup from 'yup'
 
 export const createChapterValidate = yup.object({
-    name: yup.string().nullable().required('Email is requied'),
-    description: yup.string().nullable().min(8).required('Password is requied'),
+    name: yup.string().nullable().required('Name is requied'),
     type: yup.object().shape({
         value: yup.string().nullable().required("Type is required")
     }),

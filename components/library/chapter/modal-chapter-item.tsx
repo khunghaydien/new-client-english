@@ -7,7 +7,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Chapter as IChapter } from "@/gql/graphql";
 import { useFormik } from "formik";
 import React, {
   ChangeEvent,
@@ -17,18 +16,16 @@ import React, {
 } from "react";
 import { createChapterValidate } from "../formik";
 import { Input } from "@/components/ui/input";
-import SelectSingleAutoComplete, {
-  Option,
-} from "@/components/ui/select-single-auto-complete";
 import { ECHAPTER, EDIFFICULTY } from "@/const/library";
-import { convertEnumToOption } from "@/lib/utils";
+import { convertEnumToOption, scrollToFirstErrorMessage } from "@/lib/utils";
+import SingleSelect, { Option } from "@/components/ui/single-select";
 interface IModalChapterItem {
   open: boolean;
   title: string;
   description: string;
   setOpen: Dispatch<SetStateAction<boolean>>;
   onClose: () => void;
-  onSubmit: (data: IChapter[]) => void;
+  onSubmit: (data: any) => void;
 }
 
 function ModalChapterItem({
@@ -53,10 +50,15 @@ function ModalChapterItem({
       },
     },
     validationSchema: createChapterValidate,
-    onSubmit: () => {},
+    onSubmit: (values) => {
+      setTimeout(() => {
+        scrollToFirstErrorMessage();
+      });
+      onClose();
+      onSubmit(values);
+    },
   });
   const { values, setFieldValue, errors, touched } = formik;
-
   const handleChange = useCallback((value: string, keyname: string) => {
     setFieldValue(keyname, value);
   }, []);
@@ -95,7 +97,7 @@ function ModalChapterItem({
             errorMessage={errors.description}
           ></Input>
 
-          <SelectSingleAutoComplete
+          <SingleSelect
             label={"Type"}
             required={true}
             error={touched.type?.value && touched.type.value}
@@ -106,7 +108,7 @@ function ModalChapterItem({
             placeholder="Type"
           />
 
-          <SelectSingleAutoComplete
+          <SingleSelect
             label={"Difficulty"}
             placeholder="Difficulty"
             required={true}
@@ -116,8 +118,11 @@ function ModalChapterItem({
             error={touched.difficulty?.value && touched.difficulty?.value}
             errorMessage={errors.difficulty?.value}
           />
+
           <DialogFooter className="flex gap-2 mt-6">
-            <Button variant={"outline"}>Cancel</Button>
+            <Button variant={"outline"} onClick={onClose}>
+              Cancel
+            </Button>
             <Button type="submit">Submit</Button>
           </DialogFooter>
         </form>

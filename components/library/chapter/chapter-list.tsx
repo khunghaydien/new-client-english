@@ -1,14 +1,8 @@
 "use client";
-import React, {
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Chapter as IChapter, Pagination as IPagination } from "@/gql/graphql";
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { GET_CHAPTERS } from "@/graphql/query/library";
 import { isEmpty } from "lodash";
 import { TbDatabaseOff } from "react-icons/tb";
@@ -32,6 +26,7 @@ import { useChapterStore } from "@/stores/chapterStore";
 import { CarouselPalette } from "@/components/common/carousel-palette";
 import { PAGE_SIZES } from "@/const/app";
 import ModalChapterItem from "./modal-chapter-item";
+import { CREATE_CHAPTER } from "@/graphql/mutation/library";
 
 export const NoData = () => {
   return (
@@ -185,9 +180,7 @@ const WrappedChapterList = () => {
 
   useEffect(() => {
     reset();
-    if (type) {
-      setChapterFilterDto({ type: type.toUpperCase() });
-    }
+    setChapterFilterDto({ type: type?.toUpperCase() ?? "" });
   }, [type]);
 
   const handleClick = useCallback((id: string, type: string) => {
@@ -228,8 +221,8 @@ const WrappedChapterList = () => {
     } else {
       setChapterFilterDto({
         difficulty: "",
-        type: "",
         status: "",
+        type: type?.toLocaleUpperCase() ?? "",
         name: search.label,
       });
     }
@@ -239,21 +232,32 @@ const WrappedChapterList = () => {
     setPagination(data?.getChapters?.pagination);
   }, [data]);
 
-  const scope = useMemo(() => {
-    return {
-      type: type?.toLocaleUpperCase() ?? "",
-    };
-  }, [type]);
-
   const [showModalChapter, setShowModalChapter] = useState(false);
-  const handleCreateChapter = (chapters: IChapter[]) => {};
+  const [createChapter] = useMutation(CREATE_CHAPTER);
+  const handleCreateChapter = async (values: any) => {
+    try {
+      await createChapter({
+        variables: {
+          chapterCreateDto: {
+            name: values?.name,
+            description: values?.description,
+            type: values?.type?.value,
+            difficulty: values?.difficulty?.value,
+          },
+        },
+      });
+    } catch (error) {}
+  };
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex justify-between gap-6 items-center">
         <div className="flex gap-6 items-start w-full">
           <div className="max-w-[600px] w-full">
             <InputSearch
-              scope={scope}
+              scope={{
+                type: type?.toLocaleUpperCase() ?? "",
+              }}
               onSearch={handleSearch}
               target="Chapter"
             />
@@ -267,7 +271,7 @@ const WrappedChapterList = () => {
           title={"Create chapter"}
           description={"Create chapter and earn money"}
           setOpen={setShowModalChapter}
-          onClose={() => setShowModalChapter(true)}
+          onClose={() => setShowModalChapter(false)}
           onSubmit={handleCreateChapter}
         />
       </div>

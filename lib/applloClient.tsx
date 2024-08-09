@@ -101,6 +101,34 @@ const errorLink = onError(
   }
 );
 
+const successLink = new ApolloLink((operation, forward) => {
+  return forward(operation).map((response) => {
+    if (response.data) {
+      console.log(response.data);
+      // Lặp qua các phản hồi mutation để hiển thị thông báo thành công
+      Object.keys(response.data).forEach((key) => {
+        if (
+          key.toLowerCase().includes("create") ||
+          key.toLowerCase().includes("update") ||
+          key.toLowerCase().includes("delete")
+        ) {
+          const operationName = key.charAt(0).toUpperCase() + key.slice(1);
+          toast({
+            title: `${operationName
+              .replace(/([A-Z])/g, " $1")
+              .trim()} Successful`,
+            description: `${operationName
+              .replace(/([A-Z])/g, " $1")
+              .trim()} was successful.`,
+            variant: "success",
+          });
+        }
+      });
+    }
+    return response;
+  });
+});
+
 // Create an HTTP link
 const httpLink = new HttpLink({
   uri: "http://localhost:3030/graphql",
@@ -111,7 +139,7 @@ const httpLink = new HttpLink({
 });
 
 // Combine error link and HTTP link
-const link = ApolloLink.from([errorLink, httpLink]);
+const link = ApolloLink.from([errorLink, successLink, httpLink]);
 
 // Initialize Apollo Client
 export const client = new ApolloClient({

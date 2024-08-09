@@ -4,25 +4,29 @@ import React, {
   useRef,
   useCallback,
   forwardRef,
+  useMemo,
 } from "react";
-import { Input, InputProps } from "../ui/input";
-import { cn, getTextEllipsis, useClickOutside } from "@/lib/utils";
+import { Input, InputProps } from "./input";
+import {
+  cn,
+  getTextEllipsis,
+  useClickOutside,
+  useDistanceToBottom,
+} from "@/lib/utils";
 import _ from "lodash";
 import { RiArrowDropDownLine } from "react-icons/ri";
+import { ScrollArea } from "./scroll-area";
 
 export interface Option {
   value: string;
   label: string;
 }
-export interface ISelectSingleAutoComplete extends InputProps {
+export interface ISingleSelect extends InputProps {
   options: Option[];
   selected?: Option;
   handleSelect: (option: Option) => void;
 }
-const SelectSingleAutoComplete = forwardRef<
-  HTMLInputElement,
-  ISelectSingleAutoComplete
->(
+const SingleSelect = forwardRef<HTMLInputElement, ISingleSelect>(
   (
     {
       label,
@@ -40,12 +44,29 @@ const SelectSingleAutoComplete = forwardRef<
   ) => {
     const [inputValue, setInputValue] = useState<string>(selected?.label || "");
     const [filteredOptions, setFilteredOptions] = useState<Option[]>(options);
-    const [activeOptionIndex, setActiveOptionIndex] = useState<number>(
-      filteredOptions.findIndex(({ value }) => value === selected?.value)
-    );
+    const [activeOptionIndex, setActiveOptionIndex] = useState<number>(-1);
     const [showOptions, setShowOptions] = useState<boolean>(false);
     const inputRef = useRef<HTMLInputElement>(null);
     const selectRef = useRef<HTMLDivElement>(null);
+
+    const distanceToBottom = useDistanceToBottom(selectRef);
+    useEffect(() => {
+      setActiveOptionIndex(
+        filteredOptions.findIndex(({ value }) => value === selected?.value)
+      );
+    }, [selected, filteredOptions]);
+
+    const heightOptions = useMemo(() => {
+      const optionsLength =
+        filteredOptions.length > 10 ? 10 : filteredOptions.length;
+      return optionsLength * 44;
+    }, [filteredOptions]);
+
+    const shouldDisplayAbove = useMemo(() => {
+      const optionsLength = options.length > 10 ? 10 : options.length;
+      return Boolean(distanceToBottom < optionsLength * 50);
+    }, [distanceToBottom, options]);
+
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       const value = event.target.value;
       setInputValue(value);
@@ -106,7 +127,7 @@ const SelectSingleAutoComplete = forwardRef<
 
     const handleClick = () => {
       if (selected) setFilteredOptions(options);
-      setShowOptions(true);
+      setShowOptions((prev) => !prev);
     };
 
     return (
@@ -134,19 +155,27 @@ const SelectSingleAutoComplete = forwardRef<
           />
           {showOptions && filteredOptions.length > 0 && (
             <div
-              className={`flex flex-col gap-1 animate-in fade-in-0 zoom-in-95 absolute z-10 w-full rounded-lg outline-none bg-gray-200 dark:bg-gray-900 p-2 shadow-lg`}
+              className={`flex flex-col gap-1 animate-in fade-in-0 zoom-in-95 absolute z-10 w-full rounded-lg outline-none bg-gray-100 dark:bg-gray-900 p-2 shadow-lg ${
+                shouldDisplayAbove ? "bottom-10 mb-1" : "top-full mt-1"
+              }`}
             >
-              {filteredOptions.map((option, index) => (
-                <div
-                  key={option.value}
-                  onClick={() => onSelect(option)}
-                  className={`cursor-pointer hover:bg-muted-foreground/20 h-10 px-2 py-2 rounded-lg ${
-                    index === activeOptionIndex ? "bg-muted-foreground/20" : ""
-                  }`}
-                >
-                  {getTextEllipsis(option.label)}
+              <ScrollArea style={{ height: `${heightOptions}px` }}>
+                <div className="flex flex-col gap-1">
+                  {filteredOptions.map((option, index) => (
+                    <div
+                      key={option.value}
+                      onClick={() => onSelect(option)}
+                      className={`cursor-pointer hover:bg-muted-foreground/20 h-10 px-2 py-2 rounded-lg ${
+                        index === activeOptionIndex
+                          ? "bg-muted-foreground/20"
+                          : ""
+                      }`}
+                    >
+                      {getTextEllipsis(option.label)}
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </ScrollArea>
             </div>
           )}
         </div>
@@ -155,4 +184,4 @@ const SelectSingleAutoComplete = forwardRef<
   }
 );
 
-export default SelectSingleAutoComplete;
+export default SingleSelect;
