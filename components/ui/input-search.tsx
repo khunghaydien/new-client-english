@@ -29,6 +29,7 @@ const InputSearch = ({ scope, onSearch, className, target }: IInputSearch) => {
   const [showSearchEngine, setShowSearchEngine] = useState(false);
   const [activeIndex, setActiveIndex] = useState<number>(-1);
   const [search, setSearch] = useState<ISearchOutput>({});
+  const [defaultSearch, setDefaultSearch] = useState<ISearchOutput>({});
   const { data, loading, refetch } = useQuery(GET_SEARCHS, {
     variables: {
       searchFilterDto: {
@@ -110,7 +111,12 @@ const InputSearch = ({ scope, onSearch, className, target }: IInputSearch) => {
   const handleClickSearchEngine = (search: ISearch) => {
     setSearch({ value: search, label: search.name });
     setShowSearchEngine(false);
-    onSearch({ value: search, label: search.name });
+    handleSearch({ value: search, label: search.name });
+  };
+
+  const handleSearch = (search: ISearchOutput) => {
+    setDefaultSearch(search);
+    onSearch(search);
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -128,10 +134,10 @@ const InputSearch = ({ scope, onSearch, className, target }: IInputSearch) => {
           handleClickSearchEngine(data?.getSearchs?.[activeIndex]);
         } else {
           setShowSearchEngine(false);
-          onSearch(search);
+          handleSearch(search);
         }
       } else {
-        onSearch(search);
+        handleSearch(search);
       }
     } else if (event.key === "Escape") {
       setShowSearchEngine(false);
@@ -142,6 +148,10 @@ const InputSearch = ({ scope, onSearch, className, target }: IInputSearch) => {
     setShowSearchEngine(false);
   });
 
+  const handleBlur = useCallback(() => {
+    setSearch(defaultSearch);
+  }, [defaultSearch]);
+
   return (
     <div className={clsx(className, "relative w-full")} ref={inputSearchRef}>
       <Input
@@ -150,7 +160,7 @@ const InputSearch = ({ scope, onSearch, className, target }: IInputSearch) => {
         onClick={() => setShowSearchEngine(true)}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
-        onBlur={() => onSearch(search)}
+        onBlur={handleBlur}
         className={"w-full bg-background h-10"}
         placeholder={"Search..."}
         ref={inputRef}

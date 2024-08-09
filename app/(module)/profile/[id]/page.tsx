@@ -43,9 +43,7 @@ function ProfilePage({ params }: { params: Params }) {
             setNewAvatar(imgSrc);
           }
         }
-      } catch (error) {
-        console.error("Update failed:", error);
-      }
+      } catch (error) {}
     },
     [id, updateUser]
   );
