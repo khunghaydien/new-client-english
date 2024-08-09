@@ -150,12 +150,12 @@ const InputSearch = ({ scope, onSearch, className, target }: IInputSearch) => {
         onClick={() => setShowSearchEngine(true)}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
-        className={"w-full bg-background h-[40px]"}
+        className={"w-full bg-background h-10"}
         placeholder={"Search..."}
         ref={inputRef}
       />
       {showSearchEngine && !isEmpty(data?.getSearchs) && (
-        <ul className="min-w-[500px] animate-in fade-in-0 zoom-in-95 absolute top-11 z-10 w-full rounded-lg outline-none bg-background p-2 shadow-lg">
+        <ul className="min-w-[500px] animate-in fade-in-0 zoom-in-95 absolute top-11 z-10 w-full rounded-lg outline-none bg-gray-200 dark:bg-gray-900 p-2 shadow-lg">
           {loading ? (
             <div className="flex items-center justify-center">
               <ImSpinner2 className="animate-spin w-8 h-8 text-primary" />

@@ -160,3 +160,10 @@ export const convertToChunks = (chunks: unknown[], maxChunkSize: number) => {
     chunkSize
   };
 };
+
+export const convertEnumToOption = (enumObj: Record<string, string>) => {
+  return Object.entries(enumObj).map(([key, value]) => ({
+    value: value,
+    label: key.charAt(0) + key.slice(1).toLowerCase(),
+  }));
+};

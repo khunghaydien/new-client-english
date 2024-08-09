@@ -31,6 +31,7 @@ import ChapterItem from "./chapter-item";
 import { useChapterStore } from "@/stores/chapterStore";
 import { CarouselPalette } from "@/components/common/carousel-palette";
 import { PAGE_SIZES } from "@/const/app";
+import ModalChapterItem from "./modal-chapter-item";
 
 export const NoData = () => {
   return (
@@ -43,12 +44,9 @@ export const NoData = () => {
 
 export const ChapterPagination = ({
   pagination,
-  chapters,
 }: {
-  pagination: IPagination | null;
-  chapters: IChapter;
+  pagination: IPagination;
 }) => {
-  if (!pagination || isEmpty(chapters)) return null;
   const { pageSize, currentPage, totalPages, totalElements } = pagination;
   const { paginationDto, setPaginationDto } = useChapterStore((state) => state);
   const skip = useMemo(() => {
@@ -247,22 +245,41 @@ const WrappedChapterList = () => {
     };
   }, [type]);
 
+  const [showModalChapter, setShowModalChapter] = useState(false);
+  const handleCreateChapter = (chapters: IChapter[]) => {};
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex gap-6 items-start w-full">
-        <div className="max-w-[600px] w-full">
-          <InputSearch scope={scope} onSearch={handleSearch} target="Chapter" />
+      <div className="flex justify-between gap-6 items-center">
+        <div className="flex gap-6 items-start w-full">
+          <div className="max-w-[600px] w-full">
+            <InputSearch
+              scope={scope}
+              onSearch={handleSearch}
+              target="Chapter"
+            />
+          </div>
         </div>
+        <Button onClick={() => setShowModalChapter(true)}>
+          Create chapter
+        </Button>
+        <ModalChapterItem
+          open={showModalChapter}
+          title={"Create chapter"}
+          description={"Create chapter and earn money"}
+          setOpen={setShowModalChapter}
+          onClose={() => setShowModalChapter(true)}
+          onSubmit={handleCreateChapter}
+        />
       </div>
+
       <ChapterList
         loading={loading}
         chapters={data?.getChapters?.chapters}
         handleClick={handleClick}
       />
-      <ChapterPagination
-        chapters={data?.getChapters?.chapters}
-        pagination={pagination}
-      />
+      {!isEmpty(data?.getChapters?.chapters) && pagination && (
+        <ChapterPagination pagination={pagination} />
+      )}
     </div>
   );
 };

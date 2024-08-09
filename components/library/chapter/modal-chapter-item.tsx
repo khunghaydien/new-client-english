@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -18,6 +17,11 @@ import React, {
 } from "react";
 import { createChapterValidate } from "../formik";
 import { Input } from "@/components/ui/input";
+import SelectSingleAutoComplete, {
+  Option,
+} from "@/components/ui/select-single-auto-complete";
+import { ECHAPTER, EDIFFICULTY } from "@/const/library";
+import { convertEnumToOption } from "@/lib/utils";
 interface IModalChapterItem {
   open: boolean;
   title: string;
@@ -39,8 +43,14 @@ function ModalChapterItem({
     initialValues: {
       name: "",
       description: "",
-      type: "",
-      difficulty: "",
+      type: {
+        label: "",
+        value: "",
+      },
+      difficulty: {
+        label: "",
+        value: "",
+      },
     },
     validationSchema: createChapterValidate,
     onSubmit: () => {},
@@ -49,6 +59,10 @@ function ModalChapterItem({
 
   const handleChange = useCallback((value: string, keyname: string) => {
     setFieldValue(keyname, value);
+  }, []);
+
+  const onSelect = useCallback((option: Option, keyname: string) => {
+    setFieldValue(keyname, option);
   }, []);
 
   return (
@@ -66,8 +80,8 @@ function ModalChapterItem({
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               handleChange(e.target.value, "name")
             }
-            error={formik.touched.name && formik.touched.name}
-            errorMessage={formik.errors.name}
+            error={touched.name && touched.name}
+            errorMessage={errors.name}
           ></Input>
 
           <Input
@@ -77,10 +91,31 @@ function ModalChapterItem({
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               handleChange(e.target.value, "description")
             }
-            error={formik.touched.description && formik.touched.description}
-            errorMessage={formik.errors.description}
+            error={touched.description && touched.description}
+            errorMessage={errors.description}
           ></Input>
 
+          <SelectSingleAutoComplete
+            label={"Type"}
+            required={true}
+            error={touched.type?.value && touched.type.value}
+            errorMessage={errors.type?.value}
+            options={convertEnumToOption(ECHAPTER)}
+            handleSelect={(option: Option) => onSelect(option, "type")}
+            selected={values.type}
+            placeholder="Type"
+          />
+
+          <SelectSingleAutoComplete
+            label={"Difficulty"}
+            placeholder="Difficulty"
+            required={true}
+            selected={values.difficulty}
+            options={convertEnumToOption(EDIFFICULTY)}
+            handleSelect={(option: Option) => onSelect(option, "difficulty")}
+            error={touched.difficulty?.value && touched.difficulty?.value}
+            errorMessage={errors.difficulty?.value}
+          />
           <DialogFooter className="flex gap-2 mt-6">
             <Button variant={"outline"}>Cancel</Button>
             <Button type="submit">Submit</Button>

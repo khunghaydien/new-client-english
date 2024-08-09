@@ -30,7 +30,7 @@ import { GET_PROFILE } from "@/graphql/query/user";
 import { useProfileStore } from "@/stores/profileStore";
 const Icon = ({ children }: { children: ReactNode }) => {
   return (
-    <div className="w-[40px] h-[40px] rounded-full bg-muted-foreground/10 hover:bg-muted-foreground/20 flex items-center justify-center cursor-pointer">
+    <div className="w-10 h-10 rounded-full bg-muted-foreground/10 hover:bg-muted-foreground/20 flex items-center justify-center cursor-pointer">
       {children}
     </div>
   );
@@ -55,11 +55,7 @@ const UnauthorizedUser = () => {
 const AvatarUser = ({ avatar }: { avatar: string }) => {
   return (
     <div className="flex items-center gap-2 bg-muted-foreground/10 hover:bg-muted-foreground/20 rounded-full">
-      <img
-        src={avatar}
-        alt="Avatar"
-        className="w-[40px] h-[40px] rounded-full"
-      />
+      <img src={avatar} alt="Avatar" className="w-10 h-10 rounded-full" />
     </div>
   );
 };
@@ -105,7 +101,7 @@ function ModuleLayout({ children }: { children: ReactNode }) {
     router.push(`/profile/${user?.id}`);
   };
   return (
-    <div className="bg-muted-foreground/10">
+    <div className="bg-muted-foreground/10 h-screen">
       <nav className="w-full flex items-center justify-between px-12 py-3 text-sm border-b-[0.5px] border-muted-foreground">
         <div className="flex gap-3">
           <Logo />
@@ -161,10 +157,7 @@ function ModuleLayout({ children }: { children: ReactNode }) {
           ) : (
             <>
               {Array.from({ length: 3 }).map((_, index) => (
-                <Skeleton
-                  key={index}
-                  className="w-[40px] h-[40px] rounded-full"
-                />
+                <Skeleton key={index} className="w-10 h-10 rounded-full" />
               ))}
             </>
           )}

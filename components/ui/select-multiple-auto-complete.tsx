@@ -115,7 +115,7 @@ const SelectMultipleAutoComplete = ({
     <div className="relative w-full" ref={selectRef}>
       <div
         onClick={handleClick}
-        className={`flex gap-1 border w-full rounded-lg flex-wrap items-center min-h-[40px] pl-2 pr-4 py-1 ${
+        className={`flex gap-1 border w-full rounded-lg flex-wrap items-center min-h-10 pl-2 pr-4 py-1 ${
           focus ? "border-ring" : ""
         }`}
       >
